@@ -19,13 +19,22 @@ class QueueRepository extends ServiceEntityRepository
         parent::__construct($registry, Queue::class);
     }
 
-    public function getAllLinks(): array
+    public function getAllTargetEntities(): array
     {
-        return \array_column($this->createQueryBuilder('q')
-            ->select('q.link')
+        /** @var Queue[] $queues */
+        $queues = $this->createQueryBuilder('q')
+            ->select('q')
             ->getQuery()
-            ->getResult(), 'link')
-            ;
+            ->getResult();
+
+
+        $queueArray = [];
+        //todo rewrite to array map
+        foreach ($queues as $queue) {
+            $queueArray[$queue->getType()][] = $queue->getTargetId();
+        }
+
+        return $queueArray;
     }
 
     public function getEntities(int $numberOfEntities, int $page): array

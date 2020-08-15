@@ -33,6 +33,16 @@ class PlayerStatistics
      */
     private ?Player $player;
 
+    /**
+     * @ORM\Column(type="string", length=30)
+     */
+    private ?string $season;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $date;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -70,6 +80,30 @@ class PlayerStatistics
     public function setPlayer(?Player $player): self
     {
         $this->player = $player;
+
+        return $this;
+    }
+
+    public function getSeason(): ?string
+    {
+        return $this->season;
+    }
+
+    public function setSeason(string $season): self
+    {
+        $this->season = $season;
+
+        return $this;
+    }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function setDate(\DateTimeInterface $date): self
+    {
+        $this->date = $date;
 
         return $this;
     }

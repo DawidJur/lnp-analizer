@@ -147,4 +147,11 @@ class Player implements PageLinkInterface
 
         return $this;
     }
+
+    public function removeAllPlayerStatistic(): self
+    {
+        $this->playerStatistics = new ArrayCollection();
+
+        return $this;
+    }
 }

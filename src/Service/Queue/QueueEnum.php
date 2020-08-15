@@ -9,22 +9,22 @@ use App\Entity\Team;
 
 class QueueEnum
 {
-    public const LEAGUE = 1;
+    public const TEAMS_FROM_LEAGUES = 1;
 
-    public const TEAM = 2;
+    public const PLAYERS_FROM_TEAMS = 2;
 
-    public const PLAYER = 3;
+    public const PLAYERS_STAT = 3;
 
     public static function getEntityType(PageLinkInterface $entity): int
     {
         if ($entity instanceof League) {
-            return self::LEAGUE;
+            return self::TEAMS_FROM_LEAGUES;
         }
         if ($entity instanceof Team) {
-            return self::TEAM;
+            return self::PLAYERS_FROM_TEAMS;
         }
         if ($entity instanceof Player) {
-            return self::PLAYER;
+            return self::PLAYERS_STAT;
         }
 
         return 0;

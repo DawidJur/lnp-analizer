@@ -28,16 +28,16 @@ class QueueAdder
     public function addToQueue(array $entities): void
     {
         $addedToQueue = 0;
-        $links = $this->queueRepository->getAllLinks();
+        $queueTargets = $this->queueRepository->getAllTargetEntities();
         /** @var PageLinkInterface $entity */
         foreach ($entities as $entity) {
-            if (in_array($entity->getLink(), $links)) {
+            $type = QueueEnum::getEntityType($entity);
+            if (false === empty($queueTargets) && \in_array($entity->getId(), $queueTargets[$type])) {
                 continue;
             }
 
-            $type = QueueEnum::getEntityType($entity);
             $queue = new Queue();
-            $queue->setLink($entity->getLink());
+            $queue->setTargetId($entity->getId());
             $queue->setType($type);
 
             $this->entityManager->persist($queue);

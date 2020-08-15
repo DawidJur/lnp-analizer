@@ -23,9 +23,9 @@ class Queue
     private ?int $type;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="integer")
      */
-    private ?string $link;
+    private ?string $targetId;
 
     public function getId(): ?int
     {
@@ -44,14 +44,14 @@ class Queue
         return $this;
     }
 
-    public function getLink(): ?string
+    public function getTargetId(): ?int
     {
-        return $this->link;
+        return $this->targetId;
     }
 
-    public function setLink(string $link): self
+    public function setTargetId(int $targetId): self
     {
-        $this->link = $link;
+        $this->targetId = $targetId;
 
         return $this;
     }
