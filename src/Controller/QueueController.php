@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\League;
 use App\Repository\QueueRepository;
-use App\Repository\TeamRepository;
 use App\Service\Queue\QueueAdder;
 use App\Service\Queue\QueueManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -40,7 +40,7 @@ class QueueController extends AbstractController
      */
     public function index(): Response
     {
-        $teams = $this->entityManager->getRepository()->findAll();
+        $teams = $this->entityManager->getRepository(League::class)->findAll();
         $this->queueAdder->addToQueue($teams);
 die;
         return $this->render('queue/index.html.twig', [
@@ -56,7 +56,8 @@ die;
     public function manage(int $page): Response
     {
         $entities = $this->queueRepository->getEntities(10, $page);
-        $this->queueManager->manage($entities);
+        if (false === empty($entities))
+            $this->queueManager->manage($entities);
 
         return new JsonResponse('success');
     }
