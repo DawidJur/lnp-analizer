@@ -11,9 +11,9 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class PlayersExtractor extends ExtractorAbstract implements ExtractorInterface
 {
-    private $playerRepository;
+    private PlayerRepository $playerRepository;
 
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(
         PlayerRepository $playerRepository,
@@ -35,7 +35,7 @@ class PlayersExtractor extends ExtractorAbstract implements ExtractorInterface
             $players = \array_merge($this->extractPlayersFromTeam($team), $players);
         }
 
-        return \array_map("unserialize", \array_unique(\array_map("serialize", $players)));
+        return array_unique($players, SORT_REGULAR);
     }
 
     public function extractPlayersFromTeam(Team $team)
@@ -52,12 +52,12 @@ class PlayersExtractor extends ExtractorAbstract implements ExtractorInterface
         foreach ($players as $player) {
             $playersData[] = [
                 'firstname' => $player->filter('.name')->text(),
-                'surname' => $player->filter('.surname')->text(),
+                'lastname' => $player->filter('.surname')->text(),
                 'link' => $player->link()->getUri(),
                 'team' => $team
             ];
         }
 
-        return \array_map("unserialize", \array_unique(\array_map("serialize", $playersData)));
+        return array_unique($playersData, SORT_REGULAR);
     }
 }

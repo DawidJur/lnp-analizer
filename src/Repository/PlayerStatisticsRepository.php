@@ -18,33 +18,4 @@ class PlayerStatisticsRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, PlayerStatistics::class);
     }
-
-    // /**
-    //  * @return PlayerStatistics[] Returns an array of PlayerStatistics objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?PlayerStatistics
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

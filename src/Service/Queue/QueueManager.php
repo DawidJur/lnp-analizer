@@ -14,8 +14,6 @@ use App\Service\Updater\TeamsUpdater;
 
 class QueueManager
 {
-    private const CHUNK_SIZE = 50;
-
     private LeaguesExtractor $leaguesExtractor;
 
     private LeaguesUpdater $leaguesUpdater;
@@ -52,6 +50,7 @@ class QueueManager
         $this->leaguesUpdater->save($leagues);
         $this->teamsUpdater->save($teams);
         $this->playersUpdater->save($players);
+        $this->playersStatsUpdater->save($playersStats);
     }
 
     private function extractData(array $arrayToExtract): array

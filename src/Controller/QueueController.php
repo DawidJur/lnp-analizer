@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
+use App\Repository\QueueRepository;
 use App\Repository\TeamRepository;
 use App\Service\Queue\QueueAdder;
 use App\Service\Queue\QueueManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class QueueController extends AbstractController
@@ -17,38 +19,43 @@ class QueueController extends AbstractController
 
     private TeamRepository $teamRepository;
 
+    private QueueRepository $queueRepository;
+
     public function __construct(
         QueueManager $queueManager,
         QueueAdder $queueAdder,
-        TeamRepository $teamRepository
+        TeamRepository $teamRepository,
+        QueueRepository $queueRepository
     )
     {
         $this->queueManager = $queueManager;
         $this->queueAdder = $queueAdder;
         $this->teamRepository = $teamRepository;
+        $this->queueRepository = $queueRepository;
     }
 
     /**
      * @Route("/queue", name="queue")
      */
-    public function index()
+    public function index(): Response
     {
-        echo 'test'; die;
         $teams = $this->teamRepository->findAll();
-        dump($teams);die;
         $this->queueAdder->addToQueue($teams);
-        die;
+die;
         return $this->render('queue/index.html.twig', [
             'controller_name' => 'QueueController',
         ]);
     }
 
     /**
-     * @Route("/queue/manager", name="queue")
+     * @Route("/queue/manager/{page}", name="queue_manager")
+     * @param int $page
+     * @return JsonResponse
      */
-    public function manage()
+    public function manage(int $page): Response
     {
-
+        $entities = $this->queueRepository->getEntities(50, $page);
+        $this->queueManager->manage($entities);
 
         return new JsonResponse([]);
     }

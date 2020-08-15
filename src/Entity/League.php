@@ -17,22 +17,22 @@ class League implements PageLinkInterface
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
      */
-    private $link;
+    private ?string $link;
 
     /**
      * @ORM\OneToMany(targetEntity=Team::class, mappedBy="league")
      */
-    private $teams;
+    private Collection $teams;
 
     public function __construct()
     {

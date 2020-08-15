@@ -19,32 +19,22 @@ class QueueRepository extends ServiceEntityRepository
         parent::__construct($registry, Queue::class);
     }
 
-    // /**
-    //  * @return Queue[] Returns an array of Queue objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function getAllLinks(): array
     {
-        return $this->createQueryBuilder('q')
-            ->andWhere('q.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('q.id', 'ASC')
-            ->setMaxResults(10)
+        return \array_column($this->createQueryBuilder('q')
+            ->select('q.link')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult(), 'link')
+            ;
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Queue
+    public function getEntities(int $numberOfEntities, int $page): array
     {
         return $this->createQueryBuilder('q')
-            ->andWhere('q.exampleField = :val')
-            ->setParameter('val', $value)
+            ->select('q')
+            ->setMaxResults($numberOfEntities)
+            ->setFirstResult($numberOfEntities * $page)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult();
     }
-    */
 }

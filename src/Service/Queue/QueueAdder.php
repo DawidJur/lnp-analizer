@@ -3,7 +3,9 @@
 
 namespace App\Service\Queue;
 
+use App\Entity\PageLinkInterface;
 use App\Entity\Queue;
+use App\Repository\QueueRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class QueueAdder
@@ -12,15 +14,27 @@ class QueueAdder
 
     private EntityManagerInterface $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    private QueueRepository $queueRepository;
+
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        QueueRepository $queueRepository
+    )
     {
         $this->entityManager = $entityManager;
+        $this->queueRepository = $queueRepository;
     }
 
     public function addToQueue(array $entities): void
     {
         $addedToQueue = 0;
+        $links = $this->queueRepository->getAllLinks();
+        /** @var PageLinkInterface $entity */
         foreach ($entities as $entity) {
+            if (in_array($entity->getLink(), $links)) {
+                continue;
+            }
+
             $type = QueueEnum::getEntityType($entity);
             $queue = new Queue();
             $queue->setLink($entity->getLink());

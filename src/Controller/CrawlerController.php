@@ -11,6 +11,7 @@ use App\Service\Updater\LeaguesUpdater;
 use App\Service\Updater\PlayersUpdater;
 use App\Service\Updater\TeamsUpdater;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -32,6 +33,8 @@ class CrawlerController extends AbstractController
 
     private PlayersUpdater $playersUpdater;
 
+    private EntityManagerInterface $entityManager;
+
     public function __construct(
         LeaguesExtractor $leaguesExtractor,
         LeaguesUpdater $leaguesUpdater,
@@ -40,7 +43,8 @@ class CrawlerController extends AbstractController
         TeamsUpdater $teamsUpdater,
         TeamRepository $teamRepository,
         PlayersExtractor $playersExtractor,
-        PlayersUpdater $playersUpdater
+        PlayersUpdater $playersUpdater,
+        EntityManagerInterface $entityManager
     )
     {
         $this->leaguesExtractor = $leaguesExtractor;
@@ -51,6 +55,7 @@ class CrawlerController extends AbstractController
         $this->teamRepository = $teamRepository;
         $this->playersExtractor = $playersExtractor;
         $this->playersUpdater = $playersUpdater;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -92,7 +97,10 @@ class CrawlerController extends AbstractController
         $addedNewTeams = $this->teamsUpdater->save($teams);
         dump($addedNewTeams);
         dump($teams);
-        die;
+
+        return $this->render('crawler/index.html.twig', [
+            'controller_name' => 'CrawlerController',
+        ]);
     }
 
     /**
@@ -106,6 +114,9 @@ class CrawlerController extends AbstractController
         dump($players);
         $addedNewPlayers = $this->playersUpdater->save($players);
         dump($addedNewPlayers);
-        die;
+
+        return $this->render('crawler/index.html.twig', [
+            'controller_name' => 'CrawlerController',
+        ]);
     }
 }

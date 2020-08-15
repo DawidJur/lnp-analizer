@@ -17,36 +17,36 @@ class Player implements PageLinkInterface
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=30)
      */
-    private $firstName;
+    private ?string $firstName;
 
     /**
      * @ORM\Column(type="string", length=40)
      */
-    private $lastName;
+    private ?string $lastName;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
      */
-    private $link;
+    private ?string $link;
 
     /**
      * @ORM\ManyToMany(targetEntity=Team::class, inversedBy="players")
      */
-    private $team;
+    private Collection $teams;
 
     /**
      * @ORM\OneToMany(targetEntity=PlayerStatistics::class, mappedBy="player", orphanRemoval=true)
      */
-    private $playerStatistics;
+    private Collection $playerStatistics;
 
     public function __construct()
     {
-        $this->team = new ArrayCollection();
+        $this->teams = new ArrayCollection();
         $this->playerStatistics = new ArrayCollection();
     }
 
@@ -94,15 +94,15 @@ class Player implements PageLinkInterface
     /**
      * @return Collection|Team[]
      */
-    public function getTeam(): Collection
+    public function getTeams(): Collection
     {
-        return $this->team;
+        return $this->teams;
     }
 
     public function addTeam(Team $team): self
     {
-        if (!$this->team->contains($team)) {
-            $this->team[] = $team;
+        if (!$this->teams->contains($team)) {
+            $this->teams[] = $team;
         }
 
         return $this;
@@ -110,8 +110,8 @@ class Player implements PageLinkInterface
 
     public function removeTeam(Team $team): self
     {
-        if ($this->team->contains($team)) {
-            $this->team->removeElement($team);
+        if ($this->teams->contains($team)) {
+            $this->teams->removeElement($team);
         }
 
         return $this;

@@ -8,9 +8,9 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class TeamsUpdater implements UpdaterInterface
 {
-    private $teamRepository;
+    private TeamRepository $teamRepository;
 
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     private const CHUNK_SIZE = 50;
 
@@ -35,7 +35,7 @@ class TeamsUpdater implements UpdaterInterface
             $teamEntity->setName($team['name']);
             $teamEntity->setLink($team['link']);
             $teamEntity->setLeague($team['league']);
-            $this->entityManager->merge($teamEntity);
+            $this->entityManager->persist($teamEntity);
 
             $addedNewTeams++;
 

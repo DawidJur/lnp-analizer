@@ -15,17 +15,17 @@ class Queue
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $type;
+    private ?int $type;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $link;
+    private ?string $link;
 
     public function getId(): ?int
     {

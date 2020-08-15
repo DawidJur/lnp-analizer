@@ -17,28 +17,28 @@ class Team implements PageLinkInterface
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
      */
-    private $link;
+    private ?string $link;
 
     /**
      * @ORM\ManyToOne(targetEntity=League::class, inversedBy="teams")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $league;
+    private ?League $league;
 
     /**
      * @ORM\ManyToMany(targetEntity=Player::class, mappedBy="team")
      */
-    private $players;
+    private Collection $players;
 
     public function __construct()
     {

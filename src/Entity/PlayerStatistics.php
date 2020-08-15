@@ -15,23 +15,23 @@ class PlayerStatistics
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $type;
+    private ?int $type;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $value;
+    private ?int $value;
 
     /**
      * @ORM\ManyToOne(targetEntity=Player::class, inversedBy="playerStatistics")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $player;
+    private ?Player $player;
 
     public function getId(): ?int
     {

@@ -29,12 +29,14 @@ class PlayersUpdater implements UpdaterInterface
     {
         $addedNewPlayers = 0;
         foreach ($players as $player) {
-            $playerEntity = $this->playerRepository->findOneBy(['url' => $player['url']]);
+            $playerEntity = $this->playerRepository->findOneBy(['link' => $player['link']]); //todo optimize this to send only 1 query
             if (!$playerEntity) {
                 $playerEntity = new Player();
                 $playerEntity->setFirstName($player['firstname']);
                 $playerEntity->setLastName($player['lastname']);
                 $playerEntity->setLink($player['link']);
+            } elseif (\in_array($player['team'], $playerEntity->getTeams()->toArray())) {
+                continue;
             }
 
             $playerEntity->addTeam($player['team']);
@@ -44,7 +46,6 @@ class PlayersUpdater implements UpdaterInterface
 
             if ($addedNewPlayers % self::CHUNK_SIZE === 0) {
                 $this->entityManager->flush();
-                $this->entityManager->clear();
             }
         }
 
