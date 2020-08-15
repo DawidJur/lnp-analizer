@@ -99,17 +99,17 @@ class QueueManager
             switch ($toExtract->getType()) {
                 case QueueEnum::TEAMS_FROM_LEAGUES:
                     $league = $this->leagueRepository->findOneBy(['id' => $toExtract->getId()]);
-                    if (null === $league) continue;
+                    if (null === $league) break;
                     $teams = \array_merge($this->teamsExtractor->extractTeamsFromLeague($league), $teams);
                     break;
                 case QueueEnum::PLAYERS_FROM_TEAMS:
                     $team = $this->teamRepository->findOneBy(['id' => $toExtract->getId()]);
-                    if (null === $team) continue;
+                    if (null === $team) break;
                     $players = \array_merge($this->playersExtractor->extractPlayersFromTeam($team), $players);
                     break;
                 case QueueEnum::PLAYERS_STAT:
                     $player = $this->playerRepository->findOneBy(['id' => $toExtract->getId()]);
-                    if (null === $player) continue;
+                    if (null === $player) break;
                     $playersStats = \array_merge($this->playerStatisticsExtractor->extractPlayerStats($player), $playersStats);
                     break;
             }

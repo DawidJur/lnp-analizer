@@ -35,7 +35,7 @@ class PlayersExtractor extends ExtractorAbstract implements ExtractorInterface
             $players = \array_merge($this->extractPlayersFromTeam($team), $players);
         }
 
-        return array_unique($players, SORT_REGULAR);
+        return \array_unique($players, SORT_REGULAR);
     }
 
     public function extractPlayersFromTeam(Team $team): array
@@ -58,6 +58,6 @@ class PlayersExtractor extends ExtractorAbstract implements ExtractorInterface
             ];
         }
 
-        return array_unique($playersData, SORT_REGULAR);
+        return \array_unique($playersData, SORT_REGULAR);
     }
 }

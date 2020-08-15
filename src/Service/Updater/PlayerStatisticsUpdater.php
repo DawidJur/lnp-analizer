@@ -25,7 +25,6 @@ class PlayerStatisticsUpdater implements UpdaterInterface
             $playerData['player']->removeAllPlayerStatistic();
             foreach ($playerData['stats'] as $stat) {
                 $statsAdded++;
-                if ($statsAdded % self::CHUNK_SIZE === 0) $this->entityManager->flush();
 
                 $playerStat = new PlayerStatistics();
                 $playerStat->setType(1);

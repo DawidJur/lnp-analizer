@@ -73,7 +73,19 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
             }
         }
 
+        $player->setAge(
+            $this->getAge($player)
+        );
+
         return ['player' => $player, 'stats' => $this->adjustPlayerStats($playersData)];
+    }
+
+    private function getAge(Player $player): int
+    {
+        $url = $player->getLink();
+        $html = $this->getWebsiteContent($url);
+        $crawler = new Crawler($html);
+        return (int) $crawler->filter('.profile-page .player .about-player span:nth-child(2)')->text();
     }
 
     private function getUrls(string $link): array
