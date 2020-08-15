@@ -38,6 +38,12 @@ class LeaguesUpdater implements UpdaterInterface
             $this->entityManager->persist($leagueEntity);
 
             $addedNewLeagues++;
+
+            try {
+                $this->entityManager->flush();
+            } catch (\Exception $e) {
+
+            }
         }
 
         $this->entityManager->flush();

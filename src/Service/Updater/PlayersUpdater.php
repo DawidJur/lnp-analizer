@@ -44,8 +44,10 @@ class PlayersUpdater implements UpdaterInterface
 
             $addedNewPlayers++;
 
-            if ($addedNewPlayers % self::CHUNK_SIZE === 0) {
+            try {
                 $this->entityManager->flush();
+            } catch (\Exception $e) {
+
             }
         }
 

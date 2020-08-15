@@ -39,8 +39,10 @@ class TeamsUpdater implements UpdaterInterface
 
             $addedNewTeams++;
 
-            if ($addedNewTeams % self::CHUNK_SIZE === 0) {
+            try {
                 $this->entityManager->flush();
+            } catch (\Exception $e) {
+
             }
         }
 
