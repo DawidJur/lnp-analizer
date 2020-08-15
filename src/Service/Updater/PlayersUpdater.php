@@ -43,12 +43,7 @@ class PlayersUpdater implements UpdaterInterface
             $this->entityManager->persist($playerEntity);
 
             $addedNewPlayers++;
-
-            try {
-                $this->entityManager->flush();
-            } catch (\Exception $e) {
-
-            }
+            $this->entityManager->flush();
         }
 
         $this->entityManager->flush();

@@ -38,12 +38,7 @@ class TeamsUpdater implements UpdaterInterface
             $this->entityManager->persist($teamEntity);
 
             $addedNewTeams++;
-
-            try {
-                $this->entityManager->flush();
-            } catch (\Exception $e) {
-
-            }
+            $this->entityManager->flush();
         }
 
         $this->entityManager->flush();
