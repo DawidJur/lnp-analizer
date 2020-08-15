@@ -23,7 +23,7 @@ class PlayersExtractor extends ExtractorAbstract implements ExtractorInterface
         $this->entityManager = $entityManager;
     }
 
-    public function getPlayers(array $teams)
+    public function getPlayers(array $teams): array
     {
         $players = [];
 
@@ -38,7 +38,7 @@ class PlayersExtractor extends ExtractorAbstract implements ExtractorInterface
         return array_unique($players, SORT_REGULAR);
     }
 
-    public function extractPlayersFromTeam(Team $team)
+    public function extractPlayersFromTeam(Team $team): array
     {
         $url = $team->getLink();
         $html = $this->getWebsiteContent($url);

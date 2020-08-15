@@ -15,7 +15,7 @@ class TeamsExtractor extends ExtractorAbstract implements ExtractorInterface
             $teams = \array_merge($this->extractTeamsFromLeague($league), $teams);
         }
 
-        return array_unique($teams, SORT_REGULAR);
+        return \array_unique($teams, SORT_REGULAR);
     }
 
     public function extractTeamsFromLeague(League $league): array
@@ -37,7 +37,7 @@ class TeamsExtractor extends ExtractorAbstract implements ExtractorInterface
             ];
         }
 
-        return array_unique($teamsData, SORT_REGULAR);
+        return \array_unique($teamsData, SORT_REGULAR);
     }
 
     private function returnTeamsInLeagueUrl(string $league): string

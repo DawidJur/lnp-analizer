@@ -34,6 +34,6 @@ class TeamRepository extends ServiceEntityRepository
         $statement = $connection->prepare("SELECT id FROM team ORDER BY RAND() LIMIT 100");
         $statement->execute();
 
-        return array_column($statement->fetchAll(), 'id');
+        return \array_column($statement->fetchAll(), 'id');
     }
 }
