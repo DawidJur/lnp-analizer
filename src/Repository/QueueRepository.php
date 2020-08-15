@@ -42,7 +42,7 @@ class QueueRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('q')
             ->select('q')
             ->setMaxResults($numberOfEntities)
-            ->setFirstResult($numberOfEntities * $page)
+            ->setFirstResult($numberOfEntities * $page * 3)
             ->getQuery()
             ->getResult();
     }
