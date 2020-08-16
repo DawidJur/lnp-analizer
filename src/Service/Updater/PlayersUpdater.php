@@ -39,6 +39,7 @@ class PlayersUpdater implements UpdaterInterface
                 $playerEntity->setLastName($player['lastname']);
                 $playerEntity->setLink($player['link']);
             } elseif (\in_array($player['team'], $playerEntity->getTeams()->toArray())) {
+                $this->queueAdder->addToQueue($playerEntity, QueueEnum::PLAYERS_STAT);
                 $this->entityManager->flush(); //flush changed age
                 continue;
             }

@@ -31,7 +31,9 @@ class LeaguesUpdater implements UpdaterInterface
         $leaguesLinks = $this->leagueRepository->getAllLinks();
 
         foreach ($leagues as $league) {
-            if (\in_array($league['link'], $leaguesLinks)) {
+            $leagueEntity = $this->leagueRepository->findOneBy(['link' => $league['link']]);
+            if ($leagueEntity) {
+                $this->queueAdder->addToQueue($leagueEntity, QueueEnum::TEAMS_FROM_LEAGUES);
                 continue;
             }
 

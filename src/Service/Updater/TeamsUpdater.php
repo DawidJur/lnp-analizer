@@ -28,9 +28,10 @@ class TeamsUpdater implements UpdaterInterface
 
     public function save(array $teams): void
     {
-        $teamsLinks = $this->teamRepository->getAllLinks();
         foreach ($teams as $team) {
-            if (\in_array($team['link'], $teamsLinks)) {
+            $teamEntity = $this->teamRepository->findOneBy(['link' => $team['link']]);
+            if ($teamEntity) {
+                $this->queueAdder->addToQueue($teamEntity, QueueEnum::PLAYERS_FROM_TEAMS);
                 continue;
             }
 
