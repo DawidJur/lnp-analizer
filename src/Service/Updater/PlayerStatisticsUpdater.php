@@ -9,8 +9,6 @@ class PlayerStatisticsUpdater implements UpdaterInterface
 {
     private EntityManagerInterface $entityManager;
 
-    private const CHUNK_SIZE = 50;
-
     public function __construct(
         EntityManagerInterface $entityManager
     )
@@ -21,7 +19,7 @@ class PlayerStatisticsUpdater implements UpdaterInterface
     public function save(array $data): void
     {
         foreach ($data as $playerData) {
-            $playerData['player']->removeAllPlayerStatistic();
+            $playerData['player']->removeAllPlayerStatistics();
             foreach ($playerData['stats'] as $stat) {
                 if ($stat['time']) {
                     $playerStat = new PlayerStatistics();

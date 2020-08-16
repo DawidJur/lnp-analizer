@@ -43,9 +43,16 @@ class QueueController extends AbstractController
     public function index(): Response
     {//378,385 in db 
         $leagues = $this->entityManager->getRepository(League::class)->findAll();
-        dump($leagues); die;
 
-        return new JsonResponse('success');
+
+        return $this->render('crawler/index.html.twig', [
+            'controller_name' => 'CrawlerController',
+        ]);
+    }
+
+    public function newLeague(): Response
+    {
+
     }
 
     /**

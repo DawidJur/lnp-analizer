@@ -36,7 +36,7 @@ class Team implements PageLinkInterface
     private ?League $league;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Player::class, mappedBy="team")
+     * @ORM\ManyToMany(targetEntity=Player::class, mappedBy="teams")
      */
     private Collection $players;
 

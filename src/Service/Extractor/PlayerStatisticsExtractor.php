@@ -139,18 +139,6 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
             $crawler->filter('.season__game .month')->text();
     }
 
-    private function adjustPlayerStats(array $playerStats): array
-    {
-        foreach ($playerStats as $key => $playerStat) {
-            if (0 === $playerStat['time'] && 0 === $playerStat['goals']) {
-                //dump($playerStats[$key]); //todo check if it works as it should
-                unset($playerStats[$key]);
-            }
-        }
-
-        return $playerStats;
-    }
-
     private function getAge(Player $player): int
     {
         $url = $player->getLink();
@@ -158,5 +146,16 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
         $crawler = new Crawler($html);
 
         return (int) $crawler->filter('.profile-page .player .about-player span')->nextAll()->text();
+    }
+
+    private function adjustPlayerStats(array $playerStats): array
+    {
+        foreach ($playerStats as $key => $playerStat) {
+            if (0 === $playerStat['time'] && 0 === $playerStat['goals']) {
+                unset($playerStats[$key]);
+            }
+        }
+
+        return $playerStats;
     }
 }

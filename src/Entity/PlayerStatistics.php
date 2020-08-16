@@ -4,8 +4,15 @@ namespace App\Entity;
 
 use App\Repository\PlayerStatisticsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 
 /**
+ * @ORM\Table(name="player_statistics",
+ *    uniqueConstraints={
+ *        @UniqueConstraint(name="players_statistic",
+ *            columns={"type", "date", "player_id"})
+ *    }
+ * )
  * @ORM\Entity(repositoryClass=PlayerStatisticsRepository::class)
  */
 class PlayerStatistics
@@ -41,7 +48,7 @@ class PlayerStatistics
     /**
      * @ORM\Column(type="datetime")
      */
-    private $date;
+    private ?\DateTimeInterface $date;
 
     public function getId(): ?int
     {
