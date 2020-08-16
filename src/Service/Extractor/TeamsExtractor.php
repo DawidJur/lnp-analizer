@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Crawler;
+namespace App\Service\Extractor;
 
 use App\Entity\League;
 use Symfony\Component\DomCrawler\Crawler;

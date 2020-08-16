@@ -25,23 +25,25 @@ class PlayerStatisticsUpdater implements UpdaterInterface
             $playerData['player']->removeAllPlayerStatistic();
             foreach ($playerData['stats'] as $stat) {
                 $statsAdded++;
-
-                $playerStat = new PlayerStatistics();
-                $playerStat->setType(1);
-                $playerStat->setValue($stat['time']);
-                $playerStat->setSeason($stat['season']);
-                $playerStat->setDate(\DateTime::createFromFormat('H:i:s d/m/Y', $stat['date'], \DateTimeZone::EUROPE));
-                $playerData['player']->addPlayerStatistic($playerStat);
-                if (0 === $stat['goals']) {
-                    continue;
+                if ($stat['time']) {
+                    $playerStat = new PlayerStatistics();
+                    $playerStat->setType(1);
+                    $playerStat->setValue($stat['time']);
+                    $playerStat->setSeason($stat['season']);
+                    $playerStat->setDate(\DateTime::createFromFormat('H:i:s d/m/Y', $stat['date']));
+                    $this->entityManager->persist($playerStat);
+                    $playerData['player']->addPlayerStatistic($playerStat);
                 }
 
-                $playerStat = new PlayerStatistics();
-                $playerStat->setType(1);
-                $playerStat->setValue($stat['goals']);
-                $playerStat->setSeason($stat['season']);
-                $playerStat->setDate(\DateTime::createFromFormat('H:i:s d/m/Y', $stat['date'], \DateTimeZone::EUROPE));
-                $playerData['player']->addPlayerStatistic($playerStat);
+                if ($stat['goals']) {
+                    $playerStat = new PlayerStatistics();
+                    $playerStat->setType(2);
+                    $playerStat->setValue($stat['goals']);
+                    $playerStat->setSeason($stat['season']);
+                    $playerStat->setDate(\DateTime::createFromFormat('H:i:s d/m/Y', $stat['date']));
+                    $this->entityManager->persist($playerStat);
+                    $playerData['player']->addPlayerStatistic($playerStat);
+                }
             }
 
             $this->entityManager->flush();

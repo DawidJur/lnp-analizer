@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Service\Crawler;
+namespace App\Service\Extractor;
 
 
 use Symfony\Component\DomCrawler\Crawler;

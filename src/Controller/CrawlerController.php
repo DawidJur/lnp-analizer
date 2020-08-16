@@ -6,15 +6,16 @@ use App\Repository\LeagueRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\PlayerStatisticsRepository;
 use App\Repository\TeamRepository;
-use App\Service\Crawler\LeaguesExtractor;
-use App\Service\Crawler\PlayersExtractor;
-use App\Service\Crawler\PlayerStatisticsExtractor;
-use App\Service\Crawler\TeamsExtractor;
+use App\Service\Extractor\LeaguesExtractor;
+use App\Service\Extractor\PlayersExtractor;
+use App\Service\Extractor\PlayerStatisticsExtractor;
+use App\Service\Extractor\TeamsExtractor;
 use App\Service\Updater\LeaguesUpdater;
 use App\Service\Updater\PlayersUpdater;
 use App\Service\Updater\TeamsUpdater;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CrawlerController extends AbstractController
@@ -75,7 +76,7 @@ class CrawlerController extends AbstractController
     /**
      * @Route("/", name="crawler")
      */
-    public function index()
+    public function index(): Response
     {
         return $this->render('crawler/index.html.twig', [
             'controller_name' => 'CrawlerController',
@@ -85,7 +86,7 @@ class CrawlerController extends AbstractController
     /**
      * @Route("/crawler/leagues", name="crawler_leagues")
      */
-    public function getLeagues()
+    public function getLeagues(): Response
     {
         $leagues = $this->leaguesExtractor->extract();
         $addedNewLeagues = $this->leaguesUpdater->save($leagues);
@@ -99,7 +100,7 @@ class CrawlerController extends AbstractController
     /**
      * @Route("/crawler/teams", name="crawler_teams")
      */
-    public function getTeams()
+    public function getTeams(): Response
     {
         $leagues = $this->leagueRepository->findAll();
         //$leagues = $this->leagueRepository->findBy(['id' => $this->leagueRepository->getRandomLeagues()]);
@@ -117,7 +118,7 @@ class CrawlerController extends AbstractController
     /**
      * @Route("/crawler/players", name="crawler_players")
      */
-    public function getPlayers()
+    public function getPlayers(): Response
     {
         //$teams = $this->teamRepository->findAll();
         $teams = $this->teamRepository->findBy(['id' => $this->teamRepository->getRandomTeams()]);
@@ -132,13 +133,13 @@ class CrawlerController extends AbstractController
     }
 
     /**
-     * @Route("/crawler/players", name="crawler_players")
+     * @Route("/crawler/player/{playerId}", name="crawler_players")
+     * @param int $playerId
      */
-    public function getPlayersStatistics()
+    public function getPlayersStatistics(int $playerId): Response
     {
-        $players = [$this->playerRepository->findOneBy(['id' => 115]), $this->playerRepository->findOneBy(['id' => 116])];
-        dump($players[0]);
-        $stats = $this->playerStatisticsExtractor->getPlayersStats($players);
+        $player = $this->playerRepository->findOneBy(['id' => $playerId]);
+        $stats = $this->playerStatisticsExtractor->extractPlayerStats($player);
         dump($stats); die;
     }
 }

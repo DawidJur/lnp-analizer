@@ -1,11 +1,8 @@
 <?php
 
-
-namespace App\Service\Crawler;
-
+namespace App\Service\Extractor;
 
 use App\Entity\Player;
-use App\Entity\Team;
 use App\Repository\PlayerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DomCrawler\Crawler;
@@ -15,7 +12,8 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
     private const SEASONS = [
         '2020-2021',
         '2019-2020',
-        '2018-2019'
+        '2018-2019',
+        '2017-2018'
     ];
 
     private PlayerRepository $playerRepository;
@@ -46,47 +44,44 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
         return $playersStats;
     }
 
-    public function extractPlayerStats(Player $player)
+    public function extractPlayerStats(Player $player): array
     {
         $playerStats = [];
-        $urls = $this->getUrls($player->getLink());
-        foreach ($urls as $url) {
-            $html = $this->getWebsiteContent($url);
-            $crawler = new Crawler($html);
-            $season = $crawler->filter('.seasons__page .season__period')->text();
-            $playerStats[$season] = $crawler->filter('.seasons__page .season__games .season__game')->each(function (Crawler $node, $i) {
-                return $node;
-            });
-        }
-
-
-        $playersData = [];
-        /** @var Crawler $playerStat */
-        foreach ($playerStats as $season => $playerMatch) {
-            foreach ($playerMatch as $playerStat) {
-                $playersData[] = [
-                    'date' => $this->extractDate($playerStat),
-                    'time' => $this->extractTimePlayed($playerStat),
-                    'goals' => $this->extractGoals($playerStat, $player),
-                    'season' => $season
-            ];
+        try {
+            $urls = $this->getUrls($player->getLink());
+            foreach ($urls as $url) {
+                $html = $this->getWebsiteContent($url);
+                $crawler = new Crawler($html);
+                $season = $crawler->filter('.seasons__page .season__period')->text();
+                $playerStats[$season] = $crawler->filter('.seasons__page .season__games .season__game')->each(function (Crawler $node, $i) {
+                    return $node;
+                });
             }
-        }
 
-        $player->setAge(
-            $this->getAge($player)
-        );
+
+            $playersData = [];
+            /** @var Crawler $playerStat */
+            foreach ($playerStats as $season => $playerMatch) {
+                foreach ($playerMatch as $playerStat) {
+                    $playersData[] = [
+                        'date' => $this->extractDate($playerStat),
+                        'time' => $this->extractTimePlayed($playerStat),
+                        'goals' => $this->extractGoals($playerStat, $player),
+                        'season' => $season
+                    ];
+                }
+            }
+
+            $player->setAge(
+                $this->getAge($player)
+            );
+        } catch (\Exception $e) {
+            dump($e);
+
+            return ['player' => $player, 'stats' => []];
+        }
 
         return ['player' => $player, 'stats' => $this->adjustPlayerStats($playersData)];
-    }
-
-    private function getAge(Player $player): int
-    {
-        $url = $player->getLink();
-        $html = $this->getWebsiteContent($url);
-        $crawler = new Crawler($html);
-
-        return (int) $crawler->filter('.profile-page .player .about-player span')->nextAll()->text();
     }
 
     private function getUrls(string $link): array
@@ -109,8 +104,9 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
         $time = explode('Minuty', $text);
         if (false === empty($time[1])) {
             $time = explode('-', $time[1]);
+            $timePlayed = (int) $time[1] - (int) $time[0];
 
-            return (int) $time[1] - (int) $time[0];
+            return $timePlayed > 0 ? $timePlayed : $timePlayed * -1;
         }
 
         return 0;
@@ -126,7 +122,9 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
         /** @var Crawler $gameAction */
         foreach ($gameProgress as $gameAction) {
             $html = $gameAction->outerHtml();
-            if (str_contains($html, 'i-goal-small') && str_contains($html, $player->getFirstName()) && str_contains($html, $player->getLastName())) {
+            if (\str_contains($html, 'i-goal-small') &&
+                \str_contains(\strtoupper($html), \strtoupper($player->getFirstName())) &&
+                \str_contains(\strtoupper($html), \strtoupper($player->getLastName()))) {
                 $goals++;
             }
         }
@@ -145,10 +143,20 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
     {
         foreach ($playerStats as $key => $playerStat) {
             if (0 === $playerStat['time'] && 0 === $playerStat['goals']) {
+                //dump($playerStats[$key]); //todo check if it works as it should
                 unset($playerStats[$key]);
             }
         }
 
         return $playerStats;
+    }
+
+    private function getAge(Player $player): int
+    {
+        $url = $player->getLink();
+        $html = $this->getWebsiteContent($url);
+        $crawler = new Crawler($html);
+
+        return (int) $crawler->filter('.profile-page .player .about-player span')->nextAll()->text();
     }
 }
