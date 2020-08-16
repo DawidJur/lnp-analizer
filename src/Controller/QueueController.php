@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\League;
+use App\Entity\Player;
 use App\Repository\QueueRepository;
 use App\Service\Queue\QueueAdder;
 use App\Service\Queue\QueueManager;
@@ -40,12 +41,10 @@ class QueueController extends AbstractController
      */
     public function index(): Response
     {
-        $teams = $this->entityManager->getRepository(League::class)->findAll();
+        $teams = $this->entityManager->getRepository(Player::class)->findAll();
         $this->queueAdder->addToQueue($teams);
-die;
-        return $this->render('queue/index.html.twig', [
-            'controller_name' => 'QueueController',
-        ]);
+
+        return new JsonResponse('success');
     }
 
     /**

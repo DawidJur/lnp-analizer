@@ -72,7 +72,7 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
             ];
             }
         }
-
+dump($this->getAge($player));
         $player->setAge(
             $this->getAge($player)
         );
@@ -85,7 +85,8 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
         $url = $player->getLink();
         $html = $this->getWebsiteContent($url);
         $crawler = new Crawler($html);
-        return (int) $crawler->filter('.profile-page .player .about-player span:nth-child(2)')->text();
+
+        return (int) $crawler->filter('.profile-page .player .about-player span')->nextAll()->text();
     }
 
     private function getUrls(string $link): array

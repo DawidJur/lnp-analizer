@@ -77,9 +77,6 @@ class CrawlerController extends AbstractController
      */
     public function index()
     {
-        $leagues = $this->leagueRepository->findAll();
-        dump($leagues);
-        die;
         return $this->render('crawler/index.html.twig', [
             'controller_name' => 'CrawlerController',
         ]);

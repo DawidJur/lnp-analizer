@@ -93,24 +93,23 @@ class QueueManager
         $teams = [];
         $players = [];
         $playersStats = [];
-
         /** @var Queue $toExtract */
         foreach ($arrayToExtract as $toExtract) {
             switch ($toExtract->getType()) {
                 case QueueEnum::TEAMS_FROM_LEAGUES:
-                    $league = $this->leagueRepository->findOneBy(['id' => $toExtract->getId()]);
+                    $league = $this->leagueRepository->findOneBy(['id' => $toExtract->getTargetId()]);
                     if (null === $league) break;
                     $teams = \array_merge($this->teamsExtractor->extractTeamsFromLeague($league), $teams);
                     break;
                 case QueueEnum::PLAYERS_FROM_TEAMS:
-                    $team = $this->teamRepository->findOneBy(['id' => $toExtract->getId()]);
+                    $team = $this->teamRepository->findOneBy(['id' => $toExtract->getTargetId()]);
                     if (null === $team) break;
                     $players = \array_merge($this->playersExtractor->extractPlayersFromTeam($team), $players);
                     break;
                 case QueueEnum::PLAYERS_STAT:
-                    $player = $this->playerRepository->findOneBy(['id' => $toExtract->getId()]);
+                    $player = $this->playerRepository->findOneBy(['id' => $toExtract->getTargetId()]);
                     if (null === $player) break;
-                    $playersStats = \array_merge($this->playerStatisticsExtractor->extractPlayerStats($player), $playersStats);
+                    $playersStats[] = $this->playerStatisticsExtractor->extractPlayerStats($player);
                     break;
             }
         }
