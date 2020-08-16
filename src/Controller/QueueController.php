@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\League;
 use App\Entity\Player;
+use App\Entity\Team;
 use App\Repository\QueueRepository;
 use App\Service\Queue\QueueAdder;
 use App\Service\Queue\QueueManager;
@@ -40,9 +41,9 @@ class QueueController extends AbstractController
      * @Route("/queue", name="queue")
      */
     public function index(): Response
-    {
-        $teams = $this->entityManager->getRepository(Player::class)->findAll();
-        $this->queueAdder->addToQueue($teams);
+    {//378,385 in db 
+        $leagues = $this->entityManager->getRepository(League::class)->findAll();
+        dump($leagues); die;
 
         return new JsonResponse('success');
     }
@@ -54,9 +55,11 @@ class QueueController extends AbstractController
      */
     public function manage(int $page): Response
     {
-        $entities = $this->queueRepository->getEntities(10, $page);
+        $entities = $this->queueRepository->getEntities(15, $page);
         if (false === empty($entities))
-            $this->queueManager->manage($entities);
+            return new JsonResponse('no queue entities found');
+
+        $this->queueManager->manage($entities);
 
         return new JsonResponse('success');
     }

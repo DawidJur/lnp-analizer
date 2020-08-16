@@ -63,7 +63,7 @@ class LeaguesExtractor extends ExtractorAbstract implements ExtractorInterface
     public function extractLeaguesFromWebsite(string $url)
     {
         $crawler = new Crawler(
-            json_decode(
+            \json_decode(
                 $this->getWebsiteContent($url)
             )->leagues
         );
