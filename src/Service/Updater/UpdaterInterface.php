@@ -6,5 +6,5 @@ namespace App\Service\Updater;
 
 interface UpdaterInterface
 {
-    public function save(array $data): int;
+    public function save(array $data): void;
 }

@@ -13,7 +13,7 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
         '2020-2021',
         '2019-2020',
         '2018-2019',
-        '2017-2018'
+        /*'2017-2018'*/
     ];
 
     private PlayerRepository $playerRepository;

@@ -1,11 +1,11 @@
 <?php
 
-
 namespace App\Service\Updater;
-
 
 use App\Entity\League;
 use App\Repository\LeagueRepository;
+use App\Service\Queue\QueueAdder;
+use App\Service\Queue\QueueEnum;
 use Doctrine\ORM\EntityManagerInterface;
 
 class LeaguesUpdater implements UpdaterInterface
@@ -14,17 +14,20 @@ class LeaguesUpdater implements UpdaterInterface
 
     private LeagueRepository $leagueRepository;
 
+    private QueueAdder $queueAdder;
+
     public function __construct(
         EntityManagerInterface $entityManager,
-        LeagueRepository $leagueRepository
+        LeagueRepository $leagueRepository,
+        QueueAdder $queueAdder
     ) {
         $this->entityManager = $entityManager;
         $this->leagueRepository = $leagueRepository;
+        $this->queueAdder = $queueAdder;
     }
 
-    public function save(array $leagues): int
+    public function save(array $leagues): void
     {
-        $addedNewLeagues = 0;
         $leaguesLinks = $this->leagueRepository->getAllLinks();
 
         foreach ($leagues as $league) {
@@ -36,13 +39,9 @@ class LeaguesUpdater implements UpdaterInterface
             $leagueEntity->setName($league['name']);
             $leagueEntity->setLink($league['link']);
             $this->entityManager->persist($leagueEntity);
-
-            $addedNewLeagues++;
             $this->entityManager->flush();
+
+            $this->queueAdder->addToQueue($leagueEntity, QueueEnum::TEAMS_FROM_LEAGUES);
         }
-
-        $this->entityManager->flush();
-
-        return $addedNewLeagues;
     }
 }

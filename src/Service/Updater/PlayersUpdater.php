@@ -6,6 +6,8 @@ namespace App\Service\Updater;
 
 use App\Entity\Player;
 use App\Repository\PlayerRepository;
+use App\Service\Queue\QueueAdder;
+use App\Service\Queue\QueueEnum;
 use Doctrine\ORM\EntityManagerInterface;
 
 class PlayersUpdater implements UpdaterInterface
@@ -14,20 +16,21 @@ class PlayersUpdater implements UpdaterInterface
 
     private EntityManagerInterface $entityManager;
 
-    private const CHUNK_SIZE = 50;
+    private QueueAdder $queueAdder;
 
     public function __construct(
         PlayerRepository $playerRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        QueueAdder $queueAdder
     )
     {
         $this->playerRepository = $playerRepository;
         $this->entityManager = $entityManager;
+        $this->queueAdder = $queueAdder;
     }
 
-    public function save(array $players): int
+    public function save(array $players): void
     {
-        $addedNewPlayers = 0;
         foreach ($players as $player) {
             $playerEntity = $this->playerRepository->findOneBy(['link' => $player['link']]); //todo optimize this to send only 1 query
             if (!$playerEntity) {
@@ -41,13 +44,9 @@ class PlayersUpdater implements UpdaterInterface
 
             $playerEntity->addTeam($player['team']);
             $this->entityManager->persist($playerEntity);
-
-            $addedNewPlayers++;
             $this->entityManager->flush();
+
+            $this->queueAdder->addToQueue($playerEntity, QueueEnum::PLAYERS_STAT);
         }
-
-        $this->entityManager->flush();
-
-        return $addedNewPlayers;
     }
 }

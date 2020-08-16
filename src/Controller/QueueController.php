@@ -56,7 +56,7 @@ class QueueController extends AbstractController
     public function manage(int $page): Response
     {
         $entities = $this->queueRepository->getEntities(15, $page);
-        if (false === empty($entities))
+        if (empty($entities))
             return new JsonResponse('no queue entities found');
 
         $this->queueManager->manage($entities);
