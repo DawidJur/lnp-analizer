@@ -34,15 +34,13 @@ class QueueAdder
 
     public function addToQueue(PageLinkInterface $entity, int $type = null): void
     {
-        try {
-            $queue = new Queue();
-            $queue->setTargetId($entity->getId());
-            $queue->setType($type);
+        if ($this->queueRepository->findOneBy(['targetId' => $entity->getId(), 'type' => $type])) return;
 
-            $this->entityManager->persist($queue);
-            $this->entityManager->flush();
-        } catch (\Exception $e) {
-            dump($e);
-        }
+        $queue = new Queue();
+        $queue->setTargetId($entity->getId());
+        $queue->setType($type);
+
+        $this->entityManager->persist($queue);
+        $this->entityManager->flush();
     }
 }
