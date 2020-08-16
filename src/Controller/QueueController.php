@@ -42,8 +42,8 @@ class QueueController extends AbstractController
      */
     public function index(): Response
     {//378,385 in db 
-        $leagues = $this->entityManager->getRepository(League::class)->findAll();
-
+        $entities = $this->entityManager->getRepository(Player::class)->findAll();
+        $this->queueAdder->addToQueueArray($entities);
 
         return $this->render('crawler/index.html.twig', [
             'controller_name' => 'CrawlerController',

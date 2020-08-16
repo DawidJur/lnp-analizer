@@ -4,8 +4,15 @@ namespace App\Entity;
 
 use App\Repository\QueueRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\UniqueConstraint;
 
 /**
+ *  * @ORM\Table(name="queue",
+ *    uniqueConstraints={
+ *        @UniqueConstraint(name="queue_element",
+ *            columns={"type", "target_id"})
+ *    }
+ * )
  * @ORM\Entity(repositoryClass=QueueRepository::class)
  */
 class Queue

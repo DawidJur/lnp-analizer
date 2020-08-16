@@ -28,16 +28,16 @@ class QueueAdder
         /** @var PageLinkInterface $entity */
         foreach ($entities as $entity) {
             $type = QueueEnum::getEntityType($entity);
-            $this->addToQueue($entity, $type);
+            try {
+                $this->addToQueue($entity, $type);
+            } catch (\Exception $e) {
+                dump($e);
+            }
         }
-
-        $this->entityManager->flush();
     }
 
     public function addToQueue(PageLinkInterface $entity, int $type = null): void
     {
-        if ($this->queueRepository->findOneBy(['id' => $entity->getId(), 'type' => $type])) return;
-
         $queue = new Queue();
         $queue->setTargetId($entity->getId());
         $queue->setType($type);
