@@ -89,43 +89,7 @@ class CrawlerController extends AbstractController
     public function getLeagues(): Response
     {
         $leagues = $this->leaguesExtractor->extract();
-        $addedNewLeagues = $this->leaguesUpdater->save($leagues);
-        dump($addedNewLeagues);
-
-        return $this->render('crawler/index.html.twig', [
-            'controller_name' => 'CrawlerController',
-        ]);
-    }
-
-    /**
-     * @Route("/crawler/teams", name="crawler_teams")
-     */
-    public function getTeams(): Response
-    {
-        $leagues = $this->leagueRepository->findAll();
-        //$leagues = $this->leagueRepository->findBy(['id' => $this->leagueRepository->getRandomLeagues()]);
-        //$leagues = $this->leagueRepository->findBy(['link' => 'https://www.laczynaspilka.pl/rozgrywki/nizsze-ligi,38303.html']);
-        $teams = $this->teamsExtractor->getTeams($leagues);
-        $addedNewTeams = $this->teamsUpdater->save($teams);
-        dump($addedNewTeams);
-        dump($teams);
-
-        return $this->render('crawler/index.html.twig', [
-            'controller_name' => 'CrawlerController',
-        ]);
-    }
-
-    /**
-     * @Route("/crawler/players", name="crawler_players")
-     */
-    public function getPlayers(): Response
-    {
-        //$teams = $this->teamRepository->findAll();
-        $teams = $this->teamRepository->findBy(['id' => $this->teamRepository->getRandomTeams()]);
-        $players = $this->playersExtractor->getPlayers($teams);
-        dump($players);
-        $addedNewPlayers = $this->playersUpdater->save($players);
-        dump($addedNewPlayers);
+        $this->leaguesUpdater->save($leagues);
 
         return $this->render('crawler/index.html.twig', [
             'controller_name' => 'CrawlerController',
