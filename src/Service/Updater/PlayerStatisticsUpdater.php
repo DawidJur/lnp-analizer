@@ -30,7 +30,7 @@ class PlayerStatisticsUpdater implements UpdaterInterface
                 $playerStat->setType(1);
                 $playerStat->setValue($stat['time']);
                 $playerStat->setSeason($stat['season']);
-                $playerStat->setDate(\DateTime::createFromFormat('H:i:s d/m/Y', $stat['date'], 'Europe/Warsaw'));
+                $playerStat->setDate(\DateTime::createFromFormat('H:i:s d/m/Y', $stat['date'], \DateTimeZone::EUROPE));
                 $playerData['player']->addPlayerStatistic($playerStat);
                 if (0 === $stat['goals']) {
                     continue;
@@ -40,7 +40,7 @@ class PlayerStatisticsUpdater implements UpdaterInterface
                 $playerStat->setType(1);
                 $playerStat->setValue($stat['goals']);
                 $playerStat->setSeason($stat['season']);
-                $playerStat->setDate(\DateTime::createFromFormat('H:i:s d/m/Y', $stat['date'], 'Europe/Warsaw'));
+                $playerStat->setDate(\DateTime::createFromFormat('H:i:s d/m/Y', $stat['date'], \DateTimeZone::EUROPE));
                 $playerData['player']->addPlayerStatistic($playerStat);
             }
 

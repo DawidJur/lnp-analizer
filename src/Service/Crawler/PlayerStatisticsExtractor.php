@@ -72,7 +72,7 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
             ];
             }
         }
-dump($this->getAge($player));
+
         $player->setAge(
             $this->getAge($player)
         );
