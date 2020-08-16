@@ -18,13 +18,11 @@ class PlayerStatisticsUpdater implements UpdaterInterface
         $this->entityManager = $entityManager;
     }
 
-    public function save(array $data): int
+    public function save(array $data): void
     {
-        $statsAdded = 0;
         foreach ($data as $playerData) {
             $playerData['player']->removeAllPlayerStatistic();
             foreach ($playerData['stats'] as $stat) {
-                $statsAdded++;
                 if ($stat['time']) {
                     $playerStat = new PlayerStatistics();
                     $playerStat->setType(1);
@@ -48,9 +46,5 @@ class PlayerStatisticsUpdater implements UpdaterInterface
 
             $this->entityManager->flush();
         }
-
-        $this->entityManager->flush();
-
-        return $statsAdded;
     }
 }
