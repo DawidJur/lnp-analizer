@@ -36,7 +36,7 @@ class QueueAdder
 
     public function addToQueue(PageLinkInterface $entity, int $type = null): void
     {
-        if (null === $this->queueRepository->findOneBy(['id' => $entity->getId(), 'type' => $type])) return;
+        if ($this->queueRepository->findOneBy(['id' => $entity->getId(), 'type' => $type])) return;
 
         $queue = new Queue();
         $queue->setTargetId($entity->getId());

@@ -40,7 +40,6 @@ class LeaguesUpdater implements UpdaterInterface
             $leagueEntity->setLink($league['link']);
             $this->entityManager->persist($leagueEntity);
             $this->entityManager->flush();
-
             $this->queueAdder->addToQueue($leagueEntity, QueueEnum::TEAMS_FROM_LEAGUES);
         }
     }

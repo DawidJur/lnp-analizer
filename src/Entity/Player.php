@@ -37,7 +37,7 @@ class Player implements PageLinkInterface
     /**
      * @ORM\Column(type="integer")
      */
-    private ?int $age;
+    private int $age = 0;
 
     /**
      * @ORM\ManyToMany(targetEntity=Team::class, inversedBy="players")
@@ -96,7 +96,7 @@ class Player implements PageLinkInterface
         return $this;
     }
 
-    public function getAge(): ?int
+    public function getAge(): int
     {
         return $this->age;
     }
