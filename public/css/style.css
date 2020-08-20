@@ -1,0 +1,97 @@
+.menu {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding: 20px;
+}
+.menu > div {
+    display: block;
+    width: 100%;
+    max-width: 250px;
+    padding: 0 15px;
+}
+
+.url_form_container {
+    display: grid;
+}
+
+.url_input {
+    display: block;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.submit_flying {
+    position: relative;
+}
+
+.submit_flying input {
+    position: fixed;
+    display: block;
+    width: 100px;
+    height: 50px;
+    right: 30px;
+    bottom: 30px;
+}
+
+.players_search_form {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+
+.players_search_form > div {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 15px;
+}
+
+.league {
+    max-width: 150px;
+}
+
+@media (max-width: 1400px)  {
+    .players_search_form {
+        flex-wrap: wrap;
+    }
+
+    .players_search_form > div {
+        margin: 5px;
+    }
+    .league {
+        max-width: 100%;
+    }
+}
+
+.date {
+    display: block;
+    min-width: 240px;
+}
+
+.date select {
+    width: auto;
+    height: calc(1.5em + .75rem + 2px);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.orderBy .orderByForm > * {
+    margin: 8px 0;
+}
+
+.page_number {
+    display: flex;
+    flex-direction: row-reverse;
+}
+.page_number > div {
+    display: block;
+    max-width: 80px;
+}

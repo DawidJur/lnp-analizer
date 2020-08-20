@@ -34,9 +34,19 @@ class League implements PageLinkInterface
      */
     private Collection $teams;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private bool $isMarked = true;
+
     public function __construct()
     {
         $this->teams = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->name;
     }
 
     public function getId(): ?int
@@ -95,6 +105,18 @@ class League implements PageLinkInterface
                 $team->setLeague(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIsMarked(): bool
+    {
+        return $this->isMarked;
+    }
+
+    public function setIsMarked(bool $isMarked): self
+    {
+        $this->isMarked = $isMarked;
 
         return $this;
     }

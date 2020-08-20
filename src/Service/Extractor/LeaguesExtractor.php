@@ -83,4 +83,13 @@ class LeaguesExtractor extends ExtractorAbstract implements ExtractorInterface
 
         return $leaguesData;
     }
+
+    public function extractNameFromGivenUrl(string $url): ?string
+    {
+        $html = $this->getWebsiteContent($url . '?round=0');
+        $crawler = new Crawler($html);
+        $nameWithSeason = $crawler->filter('.box-standard .season-games__nav .name-year')->text();
+
+        return explode(' - ', $nameWithSeason)[0];
+    }
 }

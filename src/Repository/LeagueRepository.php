@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\League;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Connection;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -35,5 +36,22 @@ class LeagueRepository extends ServiceEntityRepository
         $statement->execute();
 
         return array_column($statement->fetchAll(), 'id');
+    }
+
+    public function setMarkedInGivenLeagues(array $ids): void
+    {
+        $this->createQueryBuilder('l')
+            ->update('App:League', 'l')
+            ->set('l.isMarked', 0)
+            ->getQuery()
+            ->execute();
+
+        $this->createQueryBuilder('l')
+            ->update('App:League', 'l')
+            ->set('l.isMarked', 1)
+            ->where('l.id IN (:ids)')
+            ->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY)
+            ->getQuery()
+            ->execute();
     }
 }

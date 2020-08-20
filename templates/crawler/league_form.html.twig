@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dodaj nową ligę do systemu{% endblock %}
+
+{% block body %}
+<section class="jumbotron">
+    <p>Dodaj ligę oraz zawierające się w niej drużyny oraz piłkarzy.</p>
+    <p>Pamiętaj, by podać link w następującym formacie: <br>
+        <span>https://www.laczynaspilka.pl/rozgrywki/nizsze-ligi-juniorzy,37215.html</span>
+    </p>
+    <div class="url_form_container">
+        {{ form_start(form) }}
+        <p>Podaj link:</p>
+        {{ form_widget(form.newLeagueUrl) }}
+        {{ form_end(form) }}
+    </div>
+    <p>Pamiętaj, że dane zostaną dodane do systemu z opóźnieniem.</p>
+</section>
+{% endblock %}

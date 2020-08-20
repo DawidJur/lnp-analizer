@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\League;
+use App\Form\FindPlayersType;
+use App\Form\NewLeagueType;
 use App\Repository\LeagueRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\PlayerStatisticsRepository;
@@ -10,11 +13,14 @@ use App\Service\Extractor\LeaguesExtractor;
 use App\Service\Extractor\PlayersExtractor;
 use App\Service\Extractor\PlayerStatisticsExtractor;
 use App\Service\Extractor\TeamsExtractor;
+use App\Service\Queue\QueueAdder;
 use App\Service\Updater\LeaguesUpdater;
 use App\Service\Updater\PlayersUpdater;
 use App\Service\Updater\TeamsUpdater;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -44,6 +50,8 @@ class CrawlerController extends AbstractController
 
     private EntityManagerInterface $entityManager;
 
+    private QueueAdder $queueAdder;
+
     public function __construct(
         LeaguesExtractor $leaguesExtractor,
         LeaguesUpdater $leaguesUpdater,
@@ -56,7 +64,8 @@ class CrawlerController extends AbstractController
         PlayerRepository $playerRepository,
         PlayerStatisticsExtractor $playerStatisticsExtractor,
         PlayerStatisticsRepository $playerStatisticsRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        QueueAdder $queueAdder
     )
     {
         $this->leaguesExtractor = $leaguesExtractor;
@@ -71,22 +80,67 @@ class CrawlerController extends AbstractController
         $this->playerStatisticsExtractor = $playerStatisticsExtractor;
         $this->playerStatisticsRepository = $playerStatisticsRepository;
         $this->entityManager = $entityManager;
+        $this->queueAdder = $queueAdder;
     }
 
     /**
-     * @Route("/", name="crawler")
+     * @Route("/", name="list")
+     * @param Request $request
+     * @return Response
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $form = $this->createForm(FindPlayersType::class);
+        $form->handleRequest($request);
+        $data = $this->playerStatisticsRepository->getPlayersWithStats($form->getData() ?? []);
+
         return $this->render('crawler/index.html.twig', [
-            'controller_name' => 'CrawlerController',
+            'form' => $form->createView(),
+            'data' => $data,
         ]);
     }
 
     /**
-     * @Route("/crawler/leagues", name="crawler_leagues")
+     * @Route("/crawler/league", name="crawler_league")
+     * @param Request $request
+     * @return Response
+     * @throws \Exception
      */
-    public function getLeagues(): Response
+    public function getLeague(Request $request): Response
+    {
+        $form = $this->createForm(NewLeagueType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $url = \trim($form->getData()['newLeagueUrl']);
+
+            $name = $this->leaguesExtractor->extractNameFromGivenUrl($url);
+            if (!$name) {
+                throw new \Exception('Nastąpił nieoczekiwany błąd. Być może podany link jest niepoprawny.');
+            }
+
+            if ($this->leagueRepository->findOneBy(['link' => $url])) {
+                throw new \Exception('Ta liga jest już w bazie');
+            }
+
+            $league = new League();
+            $league->setLink($url);
+            $league->setName($name);
+            $this->entityManager->persist($league);
+            $this->entityManager->flush();
+            $this->queueAdder->addToQueue($league, 1);
+
+            return $this->redirectToRoute('queue');
+        }
+
+        return $this->render('crawler/league_form.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/crawler/leagues_from_api", name="crawler_leagues_from_api")
+     */
+    public function getLeaguesFromApi(): Response
     {
         $leagues = $this->leaguesExtractor->extract();
         $this->leaguesUpdater->save($leagues);
@@ -94,16 +148,5 @@ class CrawlerController extends AbstractController
         return $this->render('crawler/index.html.twig', [
             'controller_name' => 'CrawlerController',
         ]);
-    }
-
-    /**
-     * @Route("/crawler/player/{playerId}", name="crawler_players")
-     * @param int $playerId
-     */
-    public function getPlayersStatistics(int $playerId): Response
-    {
-        $player = $this->playerRepository->findOneBy(['id' => $playerId]);
-        $stats = $this->playerStatisticsExtractor->extractPlayerStats($player);
-        dump($stats); die;
     }
 }

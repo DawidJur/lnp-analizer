@@ -21,10 +21,22 @@ class PlayerRepository extends ServiceEntityRepository
 
     public function getAllLinks(): array
     {
-        return \array_column($this->createQueryBuilder('l')
-            ->select('l.link')
+        return \array_column($this->createQueryBuilder('p')
+            ->select('p.link')
             ->getQuery()
             ->getResult(), 'link')
             ;
+    }
+
+    public function relation(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p, t, l')
+            ->innerJoin('p.teams', 't')
+            ->innerJoin('t.league', 'l')
+            ->setMaxResults(1)
+            ->andWhere('l.id = 11')
+            ->getQuery()
+            ->execute();
     }
 }

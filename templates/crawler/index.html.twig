@@ -1,20 +1,155 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello CrawlerController!{% endblock %}
+{% block title %}Lista zawodników{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <section class="jumbotron">
+        {{ form_start(form) }}
+        <div class="players_search_form">
+            <div class=".player_name">
+                <p>Imię i nazwisko</p>
+                {{ form_widget(form.playerName) }}
+            </div>
+            <div class="age">
+                <p>Wiek</p>
+                {{ form_widget(form.ageFrom) }}
+                {{ form_widget(form.ageTo) }}
+            </div>
+            <div class="goals">
+                <p>Ilość bramek</p>
+                {{ form_widget(form.goalsFrom) }}
+                {{ form_widget(form.goalsTo) }}
+            </div>
+            <div class="minutes">
+                <p>Ilość minut</p>
+                {{ form_widget(form.minutesFrom) }}
+                {{ form_widget(form.minutesTo) }}
+            </div>
+            <div class="date">
+                <p>Data</p>
+                {{ form_widget(form.dateFrom) }}
+                {{ form_widget(form.dateTo) }}
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+            </div>
+            <div class="league">
+                <p>Liga</p>
+                {{ form_widget(form.league) }}
+            </div>
+            <div class="season">
+                <p>Sezon</p>
+                {{ form_widget(form.season) }}
+            </div>
+            <div class="submit">
+                {{ form_widget(form.submit, { 'label': 'Zastosuj filtry' }) }}
+            </div>
+        </div>
+        <table class="player_list table table-striped table-bordered">
+            <thead class="orderBy">
+            <tr>
+                <th>
+                    <p>
+                        Imię i nazwisko gracza
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/xampp/htdocs/lnp-analizer/src/Controller/CrawlerController.php'|file_link(0) }}">src/Controller/CrawlerController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/xampp/htdocs/lnp-analizer/templates/crawler/index.html.twig'|file_link(0) }}">templates/crawler/index.html.twig</a></code></li>
-    </ul>
-</div>
+                    </p>
+                    <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#sort_name"
+                            aria-expanded="false" aria-controls="sort_name">Sortuj
+                    </button>
+                    <div class="orderByForm collapse" id="sort_name">
+                        {{ form_widget(form.orderByPlayer.order) }}
+                        {{ form_widget(form.orderByPlayer.way) }}
+                    </div>
+                </th>
+                <th>
+                    <p>
+                        Wiek
+
+                    </p>
+                    <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#sort_age"
+                            aria-expanded="false" aria-controls="sort_age">Sortuj
+                    </button>
+                    <div class="orderByForm collapse" id="sort_age">
+                        {{ form_widget(form.orderByAge.order) }}
+                        {{ form_widget(form.orderByAge.way) }}
+                    </div>
+                </th>
+                <th>
+                    <p>
+                        Gole
+
+                    </p>
+                    <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse"
+                            data-target="#sort_goals" aria-expanded="false" aria-controls="sort_goals">Sortuj
+                    </button>
+                    <div class="orderByForm collapse" id="sort_goals">
+                        {{ form_widget(form.orderByGoals.order) }}
+                        {{ form_widget(form.orderByGoals.way) }}
+                    </div>
+                </th>
+                <th>
+                    <p>
+                        Minuty
+
+                    </p>
+                    <button class="btn btn-sm btn-primary" type="button" data-toggle="collapse"
+                            data-target="#sort_minutes" aria-expanded="false" aria-controls="sort_minutes">Sortuj
+                    </button>
+                    <div class="orderByForm collapse" id="sort_minutes">
+                        {{ form_widget(form.orderByMinutes.order) }}
+                        {{ form_widget(form.orderByMinutes.way) }}
+                    </div>
+                </th>
+                {% if data[0].season is defined %}
+                    <th>
+                        <p>Sezon</p>
+                    </th>
+                {% endif %}
+                <th>
+                    <p>Profil ŁNP</p>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for row in data %}
+                <tr id="player{{ row.id }}">
+                    <td>
+                        {{- row.name -}}
+                    </td>
+                    <td>
+                        {{- row.age -}}
+                    </td>
+                    <td>
+                        {{- row.goals | default(0) -}}
+                    </td>
+                    <td>
+                        {{- row.minutes | default(0) -}}
+                    </td>
+                    {% if row.season is defined %}
+                        <td>
+                            {{- row.season -}}
+                        </td>
+                    {% endif %}
+                    <td>
+                        <a href="{{ row.link }}" target="_blank">
+                            <button type="button" class="btn btn-success btn-sm">
+                                Link
+                            </button>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div class="page_number">
+            <div>
+                {{ form_widget(form.page) }}
+                <span>strona</span>
+            </div>
+            <div>
+                {{ form_widget(form.limit) }}
+                <span>Ilość danych na stronę</span>
+            </div>
+        </div>
+        {{ form_end(form) }}
+    </section>
 {% endblock %}

@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\PlayerStatistics;
+use App\Service\PlayersList\PlayersFormResolver;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -14,8 +15,23 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PlayerStatisticsRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private PlayersFormResolver $playersFormResolver;
+
+    public function __construct(
+        ManagerRegistry $registry,
+        PlayersFormResolver $playersFormResolver
+    )
     {
         parent::__construct($registry, PlayerStatistics::class);
+        $this->playersFormResolver = $playersFormResolver;
+    }
+
+    public function getPlayersWithStats(array $filters = []): array
+    {
+        dump($filters);
+        $qb = $this->playersFormResolver->resolve($filters);
+dump($qb->getQuery()->getSQL());
+        return $qb->getQuery()
+            ->execute();
     }
 }
