@@ -138,7 +138,7 @@ class PlayersFormResolver
             return;
         }
 
-        if ($filters['season'] === 'group' && $statsAlias !== 's') {dump($statsAlias);
+        if ($filters['season'] === 'group' && $statsAlias !== 's') {
             $qb->andWhere($statsAlias . '.season = s.season');
 
             return;
@@ -203,8 +203,6 @@ class PlayersFormResolver
         $this->resolveLeagueForSubQuery($qb, $filters);
         $this->resolveSeason($qb, $filters, $alias);
         $this->resolveDate($qb, $filters, $alias);
-
-        dump($qb->getQuery()->getDQL());
 
         return '(' . $qb->getQuery()->getDQL() . ')';
     }

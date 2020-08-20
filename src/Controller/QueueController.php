@@ -3,11 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\League;
-use App\Entity\LeagueQueue;
-use App\Entity\Player;
 use App\Entity\Queue;
-use App\Entity\Team;
-use App\Form\LeaguesQueueCollectionType;
 use App\Repository\QueueRepository;
 use App\Service\Queue\QueueAdder;
 use App\Service\Queue\QueueManager;
@@ -40,13 +36,6 @@ class QueueController extends AbstractController
         $this->queueRepository = $queueRepository;
         $this->entityManager = $entityManager;
     }
-
-/*SELECT s.player_id, p.first_name as 'imie', p.last_name as 'nazwisko', p.age as 'wiek', sum(s.value) wartosc, s.season FROM `player_statistics` s
-inner join player p on p.id = s.player_id
-where p.age >= 14 and p.age < 18
-and season = 'SEZON 2019/2020'
-GROUP By s.player_id, s.type, s.season
-ORDER BY s.type DESC, wartosc DESC*/
 
     /**
      * @Route("/queue", name="queue")
