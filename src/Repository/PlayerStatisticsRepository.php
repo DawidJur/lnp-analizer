@@ -28,9 +28,8 @@ class PlayerStatisticsRepository extends ServiceEntityRepository
 
     public function getPlayersWithStats(array $filters = []): array
     {
-        dump($filters);
         $qb = $this->playersFormResolver->resolve($filters);
-dump($qb->getQuery()->getSQL());
+
         return $qb->getQuery()
             ->execute();
     }
