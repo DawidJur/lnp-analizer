@@ -155,6 +155,7 @@ class PlayersFormResolver
             $qb->andWhere($statsAlis . '.date >= :dateFrom')
                 ->setParameter(':dateFrom', $filters['dateFrom']);
         }
+
         if (false === empty($filters['dateTo'])) {
             $qb->andWhere($statsAlis . '.date <= :dateTo')
                 ->setParameter(':dateTo', $filters['dateTo']);
