@@ -79,7 +79,7 @@ class PlayersFormResolver
                 ->setParameter(':ageFrom', $filters['ageFrom'], Types::INTEGER);
         }
 
-        if (false === empty($filters['ageTo']) || 0 === $filters['ageTo']) {
+        if (isset($filters['ageTo']) && \is_int($filters['ageTo'])) {
             $qb->andWhere('p.age <= :ageTo')
                 ->setParameter(':ageTo', $filters['ageTo'], Types::INTEGER);
         }
@@ -92,19 +92,19 @@ class PlayersFormResolver
                 ->setParameter(':minutesFrom', $filters['minutesFrom'], Types::INTEGER);
         }
 
-        if (false === empty($filters['minutesTo']) || 0 === $filters['minutesTo']) {
+        if (isset($filters['minutesTo']) && \is_int($filters['minutesTo'])) {
             $qb->andWhere($this->getStatisticsSubQuery(1, $filters) . ' <= :minutesTo')
                 ->setParameter(':minutesTo', $filters['minutesTo'], Types::INTEGER);
         }
     }
 
     private function resolveGoals(QueryBuilder $qb, array $filters): void
-    {dump($filters);
+    {
         if (false === empty($filters['goalsFrom'])) {
             $qb->andWhere($this->getStatisticsSubQuery(2, $filters) . ' >= :goalsFrom')
                 ->setParameter(':goalsFrom', $filters['goalsFrom'], Types::INTEGER);
         }
-        if (false === empty($filters['goalsTo']) || 0 === $filters['goalsTo']) {
+        if (isset($filters['goalsTo']) && \is_int($filters['goalsTo'])) {
             $qb->andWhere($this->getStatisticsSubQuery(2, $filters) . ' <= :goalsTo')
                 ->setParameter(':goalsTo', $filters['goalsTo'], Types::INTEGER);
         }
