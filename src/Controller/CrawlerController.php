@@ -137,7 +137,7 @@ class CrawlerController extends AbstractController
     }
 
     /**
-     * @Route("/crawler/leagues_from_api", name="crawler_leagues_from_api")
+     * @Route("/crawler/init", name="crawler_leagues_from_api")
      */
     public function getLeaguesFromApi(): Response
     {

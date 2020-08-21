@@ -40,15 +40,15 @@ class PlayersFormResolver
     private function prepare(QueryBuilder $qb, array $filters): void
     {
         $qb
-            ->from('App:PlayerStatistics', 's')
+            ->from('App:Player', 'p')
             ->addSelect('p.id')
             ->addSelect(self::NAME . ' as name')
             ->addSelect('p.age')
             ->addSelect($this->getStatisticsSubQuery(1, $filters) . ' as minutes')
             ->addSelect($this->getStatisticsSubQuery(2, $filters) . ' as goals')
             ->addSelect('p.link')
-            ->innerJoin('s.player', 'p', 'WITH', 's.player = p.id')
-            ->addGroupBy('name');
+            ->innerJoin('App:PlayerStatistics', 's', 'WITH', 's.player = p.id')
+            ->addGroupBy('p.id');
     }
 
     private function resolvePagination(QueryBuilder $qb, array $filters): void
@@ -67,8 +67,8 @@ class PlayersFormResolver
     private function resolveName(QueryBuilder $qb, array $filters): void
     {
         if (false === empty($filters['playerName'])) {
-            $qb->andWhere(self::NAME . ' LIKE :name')
-                ->setParameter('name', '%' . $filters['playerName'] . '%', Types::STRING);
+            $qb->andWhere('LOWER('. self::NAME . ') LIKE :name')
+                ->setParameter('name', '%' . \strtolower($filters['playerName']) . '%', Types::STRING);
         }
     }
 
@@ -197,23 +197,24 @@ class PlayersFormResolver
             ->select('SUM(' . $alias . '.value)')
             ->from('App:PlayerStatistics', $alias)
             ->andWhere($alias . '.type = ' . $type)
-            ->andWhere($alias . '.player = s.player')
+            ->andWhere($alias . '.player = p.id')
         ;
 
-        $this->resolveLeagueForSubQuery($qb, $filters);
+        $this->resolveLeagueForSubQuery($qb, $filters, $alias);
         $this->resolveSeason($qb, $filters, $alias);
         $this->resolveDate($qb, $filters, $alias);
 
         return '(' . $qb->getQuery()->getDQL() . ')';
     }
 
-    private function resolveLeagueForSubQuery(QueryBuilder $qb, array $filters): void
+    private function resolveLeagueForSubQuery(QueryBuilder $qb, array $filters, string $alias): void
     {
         if (false === empty($filters['league'])) {
             $qb
-                ->innerJoin('p' . $this->subQueryCount. '.teams', 't')
-                ->innerJoin('t'. $this->subQueryCount . '.league', 'l')
-                ->andWhere('l' . $this->subQueryCount.  '.name = :league')
+                ->innerJoin($alias . '.player', 'p' . $this->subQueryCount)
+                ->innerJoin('p' . $this->subQueryCount . '.teams', 't' . $this->subQueryCount)
+                ->innerJoin('t'. $this->subQueryCount . '.league', 'l' . $this->subQueryCount)
+                ->andWhere('l' . $this->subQueryCount .  '.name = :league')
                 ->setParameter(':league', $filters['league'], Types::STRING);
         }
     }
