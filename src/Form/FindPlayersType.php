@@ -60,7 +60,7 @@ class FindPlayersType extends AbstractType
                 ],
             ])
             ->add('orderByGoals', OrderByType::class)
-            ->add('minutesFrom', TextType::class, [
+            ->add('minutesFrom', IntegerType::class, [
                 'required' => false,
                 'attr' => [
                     'class' => 'form-control',
@@ -68,7 +68,7 @@ class FindPlayersType extends AbstractType
                 ],
             ])
             ->add('orderByMinutes', OrderByType::class)
-            ->add('minutesTo', TextType::class, [
+            ->add('minutesTo', IntegerType::class, [
                 'required' => false,
                 'attr' => [
                     'class' => 'form-control',

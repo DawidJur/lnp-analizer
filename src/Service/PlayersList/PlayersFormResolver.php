@@ -47,7 +47,7 @@ class PlayersFormResolver
             ->addSelect($this->getStatisticsSubQuery(1, $filters) . ' as minutes')
             ->addSelect($this->getStatisticsSubQuery(2, $filters) . ' as goals')
             ->addSelect('p.link')
-            ->innerJoin('App:PlayerStatistics', 's', 'WITH', 's.player = p.id')
+            ->leftJoin('App:PlayerStatistics', 's', 'WITH', 's.player = p.id')
             ->addGroupBy('p.id');
     }
 
@@ -79,7 +79,7 @@ class PlayersFormResolver
                 ->setParameter(':ageFrom', $filters['ageFrom'], Types::INTEGER);
         }
 
-        if (false === empty($filters['ageTo'])) {
+        if (false === empty($filters['ageTo']) || 0 === $filters['ageTo']) {
             $qb->andWhere('p.age <= :ageTo')
                 ->setParameter(':ageTo', $filters['ageTo'], Types::INTEGER);
         }
@@ -92,19 +92,19 @@ class PlayersFormResolver
                 ->setParameter(':minutesFrom', $filters['minutesFrom'], Types::INTEGER);
         }
 
-        if (false === empty($filters['minutesTo'])) {
+        if (false === empty($filters['minutesTo']) || 0 === $filters['minutesTo']) {
             $qb->andWhere($this->getStatisticsSubQuery(1, $filters) . ' <= :minutesTo')
                 ->setParameter(':minutesTo', $filters['minutesTo'], Types::INTEGER);
         }
     }
 
     private function resolveGoals(QueryBuilder $qb, array $filters): void
-    {
+    {dump($filters);
         if (false === empty($filters['goalsFrom'])) {
             $qb->andWhere($this->getStatisticsSubQuery(2, $filters) . ' >= :goalsFrom')
                 ->setParameter(':goalsFrom', $filters['goalsFrom'], Types::INTEGER);
         }
-        if (false === empty($filters['goalsTo'])) {
+        if (false === empty($filters['goalsTo']) || 0 === $filters['goalsTo']) {
             $qb->andWhere($this->getStatisticsSubQuery(2, $filters) . ' <= :goalsTo')
                 ->setParameter(':goalsTo', $filters['goalsTo'], Types::INTEGER);
         }
@@ -194,7 +194,7 @@ class PlayersFormResolver
 
         $qb = $this->em->createQueryBuilder();
         $qb
-            ->select('SUM(' . $alias . '.value)')
+            ->select('COALESCE(SUM(' . $alias . '.value), 0)')
             ->from('App:PlayerStatistics', $alias)
             ->andWhere($alias . '.type = ' . $type)
             ->andWhere($alias . '.player = p.id')

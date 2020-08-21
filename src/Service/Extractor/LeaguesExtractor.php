@@ -43,7 +43,6 @@ class LeaguesExtractor extends ExtractorAbstract implements ExtractorInterface
                 $url = self::API_URL . '?zpn_id[0]=' . $id . $parameter;
                 $apiContent = $this->getWebsiteContent($url);
                 if (false === $this->validateIfLeaguePageExists($apiContent)) {
-                    dump($id);
                     continue;
                 }
 
