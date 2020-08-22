@@ -60,7 +60,7 @@ class PlayersFormResolver
         }
         if (false === empty($filters['page'])) {
             $firstResult = ($filters['page'] - 1) * ($filters['limit'] ?? 25);
-            $qb->setFirstResult((int)$firstResult);
+            $qb->setFirstResult((int) $firstResult);
         }
     }
 
@@ -168,7 +168,8 @@ class PlayersFormResolver
         $order = 0;
 
         if (false === empty($filters['orderByPlayer']['way'])) {
-            $sort[$filters['orderByPlayer']['order'] ?? $order++] = ['name' => self::NAME, 'way' => $filters['orderByPlayer']['way']];
+            $sort[$filters['orderByPlayer']['order'] ?? $order++] = ['name' => 'p.firstName', 'way' => $filters['orderByPlayer']['way']];
+            $sort[$filters['orderByPlayer']['order'] ?? $order++] = ['name' => 'p.lastName', 'way' => $filters['orderByPlayer']['way']];
         }
 
         if (false === empty($filters['orderByAge']['way'])) {
