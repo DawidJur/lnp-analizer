@@ -13,23 +13,16 @@ class PlayersFormResolver
 
     private const NAME = 'CONCAT(p.firstName, \' \', p.lastName)';
 
-    private FiltersTransformer $filtersTransformer;
-
     private int $subQueryCount = 0;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        FiltersTransformer $filtersTransformer
-    )
-    {
+        EntityManagerInterface $entityManager
+    ) {
         $this->em = $entityManager;
-        $this->filtersTransformer = $filtersTransformer;
     }
 
     public function resolve(array $filters): QueryBuilder
     {
-        $filters = $this->filtersTransformer->transform($filters);
-
         $qb = $this->em->createQueryBuilder();
         $this->prepare($qb, $filters);
         $this->resolveName($qb, $filters);
@@ -125,7 +118,7 @@ class PlayersFormResolver
                 ->addSelect('l.name as league')
                 ->innerJoin('p.teams', 't')
                 ->innerJoin('t.league', 'l')
-                ->andWhere('l.id IN (:league)')
+                ->andWhere('l IN (:league)')
                 ->setParameter(':league', $filters['league'])
                 ->addGroupBy('l')
             ;

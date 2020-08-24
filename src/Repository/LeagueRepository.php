@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\League;
+use App\Entity\Player;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -53,5 +55,21 @@ class LeagueRepository extends ServiceEntityRepository
             ->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY)
             ->getQuery()
             ->execute();
+    }
+
+    public function findLeagueByNameAndPlayer(string $name, Player $player): ?League
+    {
+        return $this->createQueryBuilder('l')
+            ->select('l')
+            ->innerJoin('l.teams', 't')
+            ->innerJoin('t.players', 'p')
+            ->andWhere('p = :player')
+            ->andWhere('UPPER(l.name) = :name')
+            ->setParameter('player', $player)
+            ->setParameter('name', \strtoupper($name))
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 }

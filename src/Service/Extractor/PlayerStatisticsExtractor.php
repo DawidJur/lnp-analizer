@@ -2,7 +2,9 @@
 
 namespace App\Service\Extractor;
 
+use App\Entity\League;
 use App\Entity\Player;
+use App\Repository\LeagueRepository;
 use App\Repository\PlayerRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DomCrawler\Crawler;
@@ -20,16 +22,20 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
 
     private EntityManagerInterface $entityManager;
 
+    private LeagueRepository $leagueRepository;
+
     public function __construct(
         PlayerRepository $playerRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        LeagueRepository $leagueRepository
     )
     {
         $this->playerRepository = $playerRepository;
         $this->entityManager = $entityManager;
+        $this->leagueRepository = $leagueRepository;
     }
 
-    public function getPlayersStats(array $players)
+    public function getPlayersStats(array $players): array
     {
         $playersStats = [];
 
@@ -63,11 +69,19 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
             /** @var Crawler $playerStat */
             foreach ($playerStats as $season => $playerMatch) {
                 foreach ($playerMatch as $playerStat) {
+                    $time = $this->extractTimePlayed($playerStat);
+                    $goals = $this->extractGoals($playerStat, $player);
+
+                    if (!$time && !$goals) {
+                        continue;
+                    }
+
                     $playersData[] = [
                         'date' => $this->extractDate($playerStat),
-                        'time' => $this->extractTimePlayed($playerStat),
-                        'goals' => $this->extractGoals($playerStat, $player),
-                        'season' => $season
+                        'time' => $time,
+                        'goals' => $goals,
+                        'season' => $season,
+                        'league' => $this->extractLeague($playerStat, $player),
                     ];
                 }
             }
@@ -157,5 +171,12 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
         }
 
         return $playerStats;
+    }
+
+    private function extractLeague(Crawler $crawler, Player $player): ?League
+    {
+        $leagueName = \trim(\explode('<br>', $crawler->filter('.season__game-action .event')->html())[1]);
+
+        return $this->leagueRepository->findLeagueByNameAndPlayer($leagueName, $player);
     }
 }

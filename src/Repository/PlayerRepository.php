@@ -27,16 +27,4 @@ class PlayerRepository extends ServiceEntityRepository
             ->getResult(), 'link')
             ;
     }
-
-    public function relation(): array
-    {
-        return $this->createQueryBuilder('p')
-            ->select('p, t, l')
-            ->innerJoin('p.teams', 't')
-            ->innerJoin('t.league', 'l')
-            ->setMaxResults(1)
-            ->andWhere('l.id = 11')
-            ->getQuery()
-            ->execute();
-    }
 }

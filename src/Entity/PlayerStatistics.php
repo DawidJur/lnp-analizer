@@ -50,6 +50,12 @@ class PlayerStatistics
      */
     private ?\DateTimeInterface $date;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=League::class)
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private ?League $league;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -84,7 +90,7 @@ class PlayerStatistics
         return $this->player;
     }
 
-    public function setPlayer(?Player $player): self
+    public function setPlayer(Player $player): self
     {
         $this->player = $player;
 
@@ -111,6 +117,18 @@ class PlayerStatistics
     public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
+
+        return $this;
+    }
+
+    public function getLeague(): ?League
+    {
+        return $this->league;
+    }
+
+    public function setLeague(?League $league): self
+    {
+        $this->league = $league;
 
         return $this;
     }
