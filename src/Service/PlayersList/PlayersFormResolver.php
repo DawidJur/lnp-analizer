@@ -121,11 +121,14 @@ class PlayersFormResolver
     private function resolveLeague(QueryBuilder $qb, array $filters): void
     {
         if (false === empty($filters['league'])) {
-            $qb->addSelect('l.name as league')
+            $qb
+                ->addSelect('l.name as league')
                 ->innerJoin('p.teams', 't')
                 ->innerJoin('t.league', 'l')
                 ->andWhere('l.id IN (:league)')
-                ->setParameter(':league', $filters['league']);
+                ->setParameter(':league', $filters['league'])
+                ->addGroupBy('l')
+            ;
         }
     }
 
