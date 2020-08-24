@@ -19,6 +19,7 @@ use App\Service\Updater\PlayersUpdater;
 use App\Service\Updater\TeamsUpdater;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -144,8 +145,6 @@ class CrawlerController extends AbstractController
         $leagues = $this->leaguesExtractor->extract();
         $this->leaguesUpdater->save($leagues);
 
-        return $this->render('crawler/index.html.twig', [
-            'controller_name' => 'CrawlerController',
-        ]);
+        return new JsonResponse('success');
     }
 }

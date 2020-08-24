@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\League;
+use App\Repository\LeagueRepository;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -93,8 +94,13 @@ class FindPlayersType extends AbstractType
             ->add('league', EntityType::class, [
                 'class' => League::class,
                 'choice_label' => 'name',
+                'multiple' => true,
                 'required' => false,
-                'attr' => ['class' => 'form-control'],
+                'attr' => ['class' => 'form-control, selectpicker', 'data-actions-box' => 'true', 'data-size' => '15', 'title' => 'Wybierz ligę'],
+                'query_builder' => function (LeagueRepository $repo) {
+                    return $repo->createQueryBuilder('l')
+                        ->orderBy('l.name', 'ASC');
+                },
             ])
             ->add('season', ChoiceType::class, [
                 'choices' => [

@@ -13,15 +13,23 @@ class PlayersFormResolver
 
     private const NAME = 'CONCAT(p.firstName, \' \', p.lastName)';
 
+    private FiltersTransformer $filtersTransformer;
+
     private int $subQueryCount = 0;
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        FiltersTransformer $filtersTransformer
+    )
     {
         $this->em = $entityManager;
+        $this->filtersTransformer = $filtersTransformer;
     }
 
     public function resolve(array $filters): QueryBuilder
     {
+        $filters = $this->filtersTransformer->transform($filters);
+
         $qb = $this->em->createQueryBuilder();
         $this->prepare($qb, $filters);
         $this->resolveName($qb, $filters);
@@ -113,10 +121,11 @@ class PlayersFormResolver
     private function resolveLeague(QueryBuilder $qb, array $filters): void
     {
         if (false === empty($filters['league'])) {
-            $qb->innerJoin('p.teams', 't')
+            $qb->addSelect('l.name as league')
+                ->innerJoin('p.teams', 't')
                 ->innerJoin('t.league', 'l')
-                ->andWhere('l.name = :league')
-                ->setParameter(':league', $filters['league'], Types::STRING);
+                ->andWhere('l.id IN (:league)')
+                ->setParameter(':league', $filters['league']);
         }
     }
 
@@ -208,8 +217,8 @@ class PlayersFormResolver
                 ->innerJoin($alias . '.player', 'p' . $this->subQueryCount)
                 ->innerJoin('p' . $this->subQueryCount . '.teams', 't' . $this->subQueryCount)
                 ->innerJoin('t'. $this->subQueryCount . '.league', 'l' . $this->subQueryCount)
-                ->andWhere('l' . $this->subQueryCount .  '.name = :league')
-                ->setParameter(':league', $filters['league'], Types::STRING);
+                ->andWhere('l' . $this->subQueryCount .  '.id = l.id')
+            ;
         }
     }
 

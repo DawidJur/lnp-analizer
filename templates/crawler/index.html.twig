@@ -98,6 +98,11 @@
                         {{ form_widget(form.orderByMinutes.way) }}
                     </div>
                 </th>
+                {% if data[0].league is defined %}
+                    <th>
+                        <p>Liga</p>
+                    </th>
+                {% endif %}
                 {% if data[0].season is defined %}
                     <th>
                         <p>Sezon</p>
@@ -124,6 +129,11 @@
                     <td>
                         {{- row.minutes -}}
                     </td>
+                    {% if row.league is defined %}
+                        <td>
+                            {{- row.league -}}
+                        </td>
+                    {% endif %}
                     {% if row.season is defined %}
                         <td>
                             {{- row.season -}}
