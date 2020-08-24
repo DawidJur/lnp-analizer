@@ -26,6 +26,7 @@ class PlayerStatisticsUpdater implements UpdaterInterface
                     $playerStat->setType(1);
                     $playerStat->setValue($stat['time']);
                     $playerStat->setSeason($stat['season']);
+                    $playerStat->setLeague($stat['league']);
                     $playerStat->setDate(\DateTime::createFromFormat('H:i:s d/m/Y', $stat['date']));
                     $this->entityManager->persist($playerStat);
                     $playerData['player']->addPlayerStatistic($playerStat);
@@ -36,6 +37,7 @@ class PlayerStatisticsUpdater implements UpdaterInterface
                     $playerStat->setType(2);
                     $playerStat->setValue($stat['goals']);
                     $playerStat->setSeason($stat['season']);
+                    $playerStat->setLeague($stat['league']);
                     $playerStat->setDate(\DateTime::createFromFormat('H:i:s d/m/Y', $stat['date']));
                     $this->entityManager->persist($playerStat);
                     $playerData['player']->addPlayerStatistic($playerStat);
