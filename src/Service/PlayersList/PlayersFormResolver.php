@@ -126,20 +126,12 @@ class PlayersFormResolver
             return;
         }
 
-        if ($statsAlias === 's') {
-            $qb->addSelect($statsAlias . '.season');
-        }
+        $qb->addSelect($statsAlias . '.season');
 
         if ($filters['season'] !== 'group') {
             $qb
                 ->andWhere($statsAlias . '.season = :season')
                 ->setParameter('season', $filters['season'], Types::STRING);
-
-            return;
-        }
-
-        if ($filters['season'] === 'group' && $statsAlias !== 's') {
-            $qb->andWhere($statsAlias . '.season = s.season');
 
             return;
         }
@@ -203,7 +195,7 @@ class PlayersFormResolver
         ;
 
         $this->resolveLeagueForSubQuery($qb, $filters, $alias);
-        $this->resolveSeason($qb, $filters, $alias);
+        $this->resolveSeasonForSubQuery($qb, $filters, $alias);
         $this->resolveDate($qb, $filters, $alias);
 
         return '(' . $qb->getQuery()->getDQL() . ')';
@@ -218,6 +210,25 @@ class PlayersFormResolver
                 ->innerJoin('t'. $this->subQueryCount . '.league', 'l' . $this->subQueryCount)
                 ->andWhere('l' . $this->subQueryCount .  '.name = :league')
                 ->setParameter(':league', $filters['league'], Types::STRING);
+        }
+    }
+
+    private function resolveSeasonForSubQuery(QueryBuilder $qb, array $filters, string $statsAlias): void
+    {
+        if (empty($filters['season']) || $filters['season'] === 'any') {
+            return;
+        }
+
+        if ($filters['season'] !== 'group') {
+            $qb
+                ->andWhere($statsAlias . '.season = :season')
+                ->setParameter('season', $filters['season'], Types::STRING);
+
+            return;
+        }
+
+        if ($filters['season'] === 'group') {
+            $qb->andWhere($statsAlias . '.season = s.season');
         }
     }
 }
