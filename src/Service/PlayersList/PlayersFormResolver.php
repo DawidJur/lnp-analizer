@@ -210,10 +210,7 @@ class PlayersFormResolver
     {
         if (false === empty($filters['league'])) {
             $qb
-                ->innerJoin($alias . '.player', 'p' . $this->subQueryCount)
-                ->innerJoin('p' . $this->subQueryCount . '.teams', 't' . $this->subQueryCount)
-                ->innerJoin('t'. $this->subQueryCount . '.league', 'l' . $this->subQueryCount)
-                ->andWhere('l' . $this->subQueryCount .  '.id = l.id')
+                ->andWhere($alias .  '.league = l.id')
             ;
         }
     }
