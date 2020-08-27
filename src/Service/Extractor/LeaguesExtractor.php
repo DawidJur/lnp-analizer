@@ -6,7 +6,7 @@ namespace App\Service\Extractor;
 
 use Symfony\Component\DomCrawler\Crawler;
 
-class LeaguesExtractor extends ExtractorAbstract implements ExtractorInterface
+class LeaguesExtractor extends ExtractorAbstract
 {
     private const API_URL = 'https://www.laczynaspilka.pl/league/get_lower';
 
@@ -27,7 +27,14 @@ class LeaguesExtractor extends ExtractorAbstract implements ExtractorInterface
         //only Silesia, ID 18
         return array_merge(
             $this->extractLeaguesFromWebsite('https://www.laczynaspilka.pl/league/get_lower?&zpn_id[0]=18&mode=&season=2020%2F2021&juniors=1'),
-            $this->extractLeaguesFromWebsite('https://www.laczynaspilka.pl/league/get_lower?&zpn_id[0]=18&mode=&season=2020%2F2021')
+            $this->extractLeaguesFromWebsite('https://www.laczynaspilka.pl/league/get_lower?&zpn_id[0]=18&mode=&season=2020%2F2021'),
+
+            /*$this->extractLeaguesFromWebsite('https://www.laczynaspilka.pl/league/get_lower?&zpn_id[0]=18&mode=&season=2019%2F2020&juniors=1'),
+            $this->extractLeaguesFromWebsite('https://www.laczynaspilka.pl/league/get_lower?&zpn_id[0]=18&mode=&season=2019%2F2020'),
+
+            $this->extractLeaguesFromWebsite('https://www.laczynaspilka.pl/league/get_lower?&zpn_id[0]=18&mode=&season=2018%2F2019&juniors=1'),
+            $this->extractLeaguesFromWebsite('https://www.laczynaspilka.pl/league/get_lower?&zpn_id[0]=18&mode=&season=2018%2F2019'),*/
+
         );
 /*
         $leagues = [];

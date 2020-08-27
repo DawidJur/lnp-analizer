@@ -3,10 +3,9 @@
 namespace App\Service\Extractor;
 
 use App\Entity\League;
+use App\Entity\PageLinkEntityInterface;
 use App\Entity\Player;
 use App\Repository\LeagueRepository;
-use App\Repository\PlayerRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DomCrawler\Crawler;
 
 class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorInterface
@@ -18,40 +17,21 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
         /*'2017-2018'*/
     ];
 
-    private PlayerRepository $playerRepository;
-
-    private EntityManagerInterface $entityManager;
-
     private LeagueRepository $leagueRepository;
 
     public function __construct(
-        PlayerRepository $playerRepository,
-        EntityManagerInterface $entityManager,
         LeagueRepository $leagueRepository
     )
     {
-        $this->playerRepository = $playerRepository;
-        $this->entityManager = $entityManager;
         $this->leagueRepository = $leagueRepository;
     }
 
-    public function getPlayersStats(array $players): array
+    public function extract(PageLinkEntityInterface $player): array
     {
-        $playersStats = [];
-
-        foreach ($players as $player) {
-            if (false === $player instanceof Player) {
-                continue;
-            }
-
-            $playersStats[] = $this->extractPlayerStats($player);
+        if (false === $player instanceof Player) {
+            throw new \Exception('Wrong implementation');
         }
 
-        return $playersStats;
-    }
-
-    public function extractPlayerStats(Player $player): array
-    {
         $playerStats = [];
         try {
             $urls = $this->getUrls($player->getLink());
@@ -63,7 +43,6 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
                     return $node;
                 });
             }
-
 
             $playersData = [];
             /** @var Crawler $playerStat */
@@ -95,7 +74,7 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
             return ['player' => $player, 'stats' => []];
         }
 
-        return ['player' => $player, 'stats' => $this->adjustPlayerStats($playersData)];
+        return [['player' => $player, 'stats' => $this->adjustPlayerStats($playersData)]];
     }
 
     private function getUrls(string $link): array

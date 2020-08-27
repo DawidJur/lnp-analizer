@@ -4,7 +4,7 @@
 namespace App\Entity;
 
 
-interface PageLinkInterface
+interface PageLinkEntityInterface
 {
     public function getId(): ?int;
 

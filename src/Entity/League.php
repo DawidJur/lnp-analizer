@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=LeagueRepository::class)
  */
-class League implements PageLinkInterface
+class League implements PageLinkEntityInterface
 {
     /**
      * @ORM\Id()

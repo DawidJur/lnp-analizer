@@ -6,7 +6,6 @@ use App\Entity\Queue;
 use App\Repository\LeagueRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TeamRepository;
-use App\Service\Extractor\LeaguesExtractor;
 use App\Service\Extractor\PlayersExtractor;
 use App\Service\Extractor\PlayerStatisticsExtractor;
 use App\Service\Extractor\TeamsExtractor;
@@ -18,8 +17,6 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class QueueManager
 {
-    private LeaguesExtractor $leaguesExtractor;
-
     private LeaguesUpdater $leaguesUpdater;
 
     private LeagueRepository $leagueRepository;
@@ -43,7 +40,6 @@ class QueueManager
     private EntityManagerInterface $entityManager;
 
     public function __construct(
-        LeaguesExtractor $leaguesExtractor,
         LeaguesUpdater $leaguesUpdater,
         LeagueRepository $leagueRepository,
         TeamsExtractor $teamsExtractor,
@@ -57,7 +53,6 @@ class QueueManager
         EntityManagerInterface $entityManager
     )
     {
-        $this->leaguesExtractor = $leaguesExtractor;
         $this->leaguesUpdater = $leaguesUpdater;
         $this->leagueRepository = $leagueRepository;
         $this->teamsExtractor = $teamsExtractor;
@@ -73,12 +68,11 @@ class QueueManager
 
     public function manage(array $arrayToExtract): void
     {
-        [$leagues, $teams, $players, $playersStats] = $this->extractData($arrayToExtract);
+        $data = $this->extractData($arrayToExtract);
 
-        $this->leaguesUpdater->save($leagues);
-        $this->teamsUpdater->save($teams);
-        $this->playersUpdater->save($players);
-        $this->playerStatisticsUpdater->save($playersStats);
+        $this->teamsUpdater->save($data[QueueEnum::TEAMS_FROM_LEAGUES]);
+        $this->playersUpdater->save($data[QueueEnum::PLAYERS_FROM_TEAMS]);
+        $this->playerStatisticsUpdater->save($data[QueueEnum::PLAYERS_STAT]);
 
         foreach ($arrayToExtract as $queue) {
             $this->entityManager->remove($queue);
@@ -89,31 +83,43 @@ class QueueManager
 
     private function extractData(array $arrayToExtract): array
     {
-        $leagues = [];
-        $teams = [];
-        $players = [];
-        $playersStats = [];
+        $data = [
+            QueueEnum::TEAMS_FROM_LEAGUES => [],
+            QueueEnum::PLAYERS_FROM_TEAMS => [],
+            QueueEnum::PLAYERS_STAT => [],
+        ];
+
         /** @var Queue $toExtract */
         foreach ($arrayToExtract as $toExtract) {
-            switch ($toExtract->getType()) {
+            $type = $toExtract->getType();
+            switch ($type) {
                 case QueueEnum::TEAMS_FROM_LEAGUES:
-                    $league = $this->leagueRepository->findOneBy(['id' => $toExtract->getTargetId()]);
-                    if (null === $league) break;
-                    $teams = \array_merge($this->teamsExtractor->extractTeamsFromLeague($league), $teams);
+                    $repository = $this->leagueRepository;
+                    $extractor = $this->teamsExtractor;
                     break;
                 case QueueEnum::PLAYERS_FROM_TEAMS:
-                    $team = $this->teamRepository->findOneBy(['id' => $toExtract->getTargetId()]);
-                    if (null === $team) break;
-                    $players = \array_merge($this->playersExtractor->extractPlayersFromTeam($team), $players);
+                    $repository = $this->teamRepository;
+                    $extractor = $this->playersExtractor;
                     break;
                 case QueueEnum::PLAYERS_STAT:
-                    $player = $this->playerRepository->findOneBy(['id' => $toExtract->getTargetId()]);
-                    if (null === $player) break;
-                    $playersStats[] = $this->playerStatisticsExtractor->extractPlayerStats($player);
+                    $repository = $this->playerRepository;
+                    $extractor = $this->playerStatisticsExtractor;
                     break;
+                default:
+                    continue 2;
+            }
+
+            $entity = $repository->findOneBy(['id' => $toExtract->getTargetId()]);
+            if ($entity === null) continue;
+
+            try {
+                $data[$type] = \array_merge($extractor->extract($entity), $data[$type]);
+            } catch (\Exception $e) {
+                dump($e);
+                die;
             }
         }
 
-        return [$leagues, $teams, $players, $playersStats];
+        return $data;
     }
 }

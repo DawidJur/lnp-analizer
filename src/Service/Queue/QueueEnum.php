@@ -3,7 +3,7 @@
 namespace App\Service\Queue;
 
 use App\Entity\League;
-use App\Entity\PageLinkInterface;
+use App\Entity\PageLinkEntityInterface;
 use App\Entity\Player;
 use App\Entity\Team;
 
@@ -15,7 +15,7 @@ class QueueEnum
 
     public const PLAYERS_STAT = 3;
 
-    public static function getEntityType(PageLinkInterface $entity): int
+    public static function getEntityType(PageLinkEntityInterface $entity): ?int
     {
         if ($entity instanceof League) {
             return self::TEAMS_FROM_LEAGUES;
@@ -27,6 +27,6 @@ class QueueEnum
             return self::PLAYERS_STAT;
         }
 
-        return 0;
+        return null;
     }
 }

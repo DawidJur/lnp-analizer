@@ -3,7 +3,7 @@
 
 namespace App\Service\Queue;
 
-use App\Entity\PageLinkInterface;
+use App\Entity\PageLinkEntityInterface;
 use App\Entity\Queue;
 use App\Repository\QueueRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,14 +25,14 @@ class QueueAdder
 
     public function addToQueueArray(array $entities): void
     {
-        /** @var PageLinkInterface $entity */
+        /** @var PageLinkEntityInterface $entity */
         foreach ($entities as $entity) {
             $type = QueueEnum::getEntityType($entity);
             $this->addToQueue($entity, $type);
         }
     }
 
-    public function addToQueue(PageLinkInterface $entity, int $type = null): void
+    public function addToQueue(PageLinkEntityInterface $entity, int $type = null): void
     {
         if ($this->queueRepository->findOneBy(['targetId' => $entity->getId(), 'type' => $type])) return;
 

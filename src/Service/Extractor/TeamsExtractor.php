@@ -3,23 +3,17 @@
 namespace App\Service\Extractor;
 
 use App\Entity\League;
+use App\Entity\PageLinkEntityInterface;
 use Symfony\Component\DomCrawler\Crawler;
 
 class TeamsExtractor extends ExtractorAbstract implements ExtractorInterface
 {
-    public function getTeams(array $leagues): array
+    public function extract(PageLinkEntityInterface $league): array
     {
-        $teams = [];
-        /** @var League $league */
-        foreach ($leagues as $league) {
-            $teams = \array_merge($this->extractTeamsFromLeague($league), $teams);
+        if (false === $league instanceof League) {
+            throw new \Exception('Wrong implementation');
         }
 
-        return \array_unique($teams, SORT_REGULAR);
-    }
-
-    public function extractTeamsFromLeague(League $league): array
-    {
         $url = $this->returnTeamsInLeagueUrl($league->getLink());
         $html = $this->getWebsiteContent($url);
         $crawler = new Crawler($html);

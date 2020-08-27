@@ -1,9 +1,8 @@
 <?php
 
-
 namespace App\Service\Extractor;
 
-
+use App\Entity\PageLinkEntityInterface;
 use App\Entity\Team;
 use App\Repository\PlayerRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,23 +22,12 @@ class PlayersExtractor extends ExtractorAbstract implements ExtractorInterface
         $this->entityManager = $entityManager;
     }
 
-    public function getPlayers(array $teams): array
+    public function extract(PageLinkEntityInterface $team): array
     {
-        $players = [];
-
-        foreach ($teams as $team) {
-            if (false === $team instanceof Team) {
-                continue;
-            }
-
-            $players = \array_merge($this->extractPlayersFromTeam($team), $players);
+        if (false === $team instanceof Team) {
+            throw new \Exception('Wrong implementation');
         }
 
-        return \array_unique($players, SORT_REGULAR);
-    }
-
-    public function extractPlayersFromTeam(Team $team): array
-    {
         $url = $team->getLink();
         $html = $this->getWebsiteContent($url);
         $crawler = new Crawler($html);
