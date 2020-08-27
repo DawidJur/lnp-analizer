@@ -92,34 +92,35 @@ class QueueManager
         /** @var Queue $toExtract */
         foreach ($arrayToExtract as $toExtract) {
             $type = $toExtract->getType();
-            switch ($type) {
-                case QueueEnum::TEAMS_FROM_LEAGUES:
-                    $repository = $this->leagueRepository;
-                    $extractor = $this->teamsExtractor;
-                    break;
-                case QueueEnum::PLAYERS_FROM_TEAMS:
-                    $repository = $this->teamRepository;
-                    $extractor = $this->playersExtractor;
-                    break;
-                case QueueEnum::PLAYERS_STAT:
-                    $repository = $this->playerRepository;
-                    $extractor = $this->playerStatisticsExtractor;
-                    break;
-                default:
-                    continue 2;
-            }
+            [$repository, $extractor] = $this->getInstanceByType($type);
 
             $entity = $repository->findOneBy(['id' => $toExtract->getTargetId()]);
             if ($entity === null) continue;
 
             try {
-                $data[$type] = \array_merge($extractor->extract($entity), $data[$type]);
+                $data[$type] = \array_merge(
+                    $extractor->extract($entity),
+                    $data[$type]
+                );
             } catch (\Exception $e) {
-                dump($e);
-                die;
+                dump($e); die;
             }
         }
 
         return $data;
+    }
+
+    private function getInstanceByType(int $type): array
+    {
+        switch ($type) {
+            case QueueEnum::TEAMS_FROM_LEAGUES:
+                return [$this->leagueRepository, $this->teamsExtractor];
+            case QueueEnum::PLAYERS_FROM_TEAMS:
+                return [$this->teamRepository, $this->playersExtractor];
+            case QueueEnum::PLAYERS_STAT:
+                return [$this->playerRepository, $this->playerStatisticsExtractor];
+        }
+
+        throw new \Exception('Uknown type');
     }
 }
