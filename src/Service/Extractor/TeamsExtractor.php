@@ -8,6 +8,11 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class TeamsExtractor extends ExtractorAbstract implements ExtractorInterface
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     public function extract(PageLinkEntityInterface $league): array
     {
         if (false === $league instanceof League) {

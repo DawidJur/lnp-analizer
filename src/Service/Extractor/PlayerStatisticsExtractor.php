@@ -23,6 +23,7 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
         LeagueRepository $leagueRepository
     )
     {
+        parent::__construct();
         $this->leagueRepository = $leagueRepository;
     }
 
@@ -42,6 +43,7 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
                 $playerStats[$season] = $crawler->filter('.seasons__page .season__games .season__game')->each(function (Crawler $node, $i) {
                     return $node;
                 });
+                unset($crawler);
             }
 
             $playersData = [];

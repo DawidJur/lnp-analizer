@@ -18,6 +18,7 @@ class PlayersExtractor extends ExtractorAbstract implements ExtractorInterface
         PlayerRepository $playerRepository,
         EntityManagerInterface $entityManager
     ) {
+        parent::__construct();
         $this->playerRepository = $playerRepository;
         $this->entityManager = $entityManager;
     }

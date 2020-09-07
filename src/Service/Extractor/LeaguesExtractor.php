@@ -10,6 +10,11 @@ class LeaguesExtractor extends ExtractorAbstract
 {
     private const API_URL = 'https://www.laczynaspilka.pl/league/get_lower';
 
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     public function extract(): array
     {
         $leagues = [];
