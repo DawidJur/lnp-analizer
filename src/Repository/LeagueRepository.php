@@ -66,7 +66,7 @@ class LeagueRepository extends ServiceEntityRepository
             ->andWhere('p = :player')
             ->andWhere('UPPER(l.name) = :name')
             ->setParameter('player', $player)
-            ->setParameter('name', \strtoupper($name))
+            ->setParameter('name', \mb_strtoupper($name))
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult()

@@ -116,8 +116,8 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
         foreach ($gameProgress as $gameAction) {
             $html = $gameAction->outerHtml();
             if (\str_contains($html, 'i-goal-small') &&
-                \str_contains(\strtoupper($html), \strtoupper($player->getFirstName())) &&
-                \str_contains(\strtoupper($html), \strtoupper($player->getLastName()))) {
+                \str_contains(mb_strtoupper($html), mb_strtoupper($player->getFirstName())) &&
+                \str_contains(mb_strtoupper($html), mb_strtoupper($player->getLastName()))) {
                 $goals++;
             }
         }

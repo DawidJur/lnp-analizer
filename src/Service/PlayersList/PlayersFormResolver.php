@@ -113,7 +113,7 @@ class PlayersFormResolver
 
     private function resolveLeague(QueryBuilder $qb, array $filters): void
     {
-        if (false === empty($filters['league'])) {
+        if (false === empty($filters['league']) && false === empty($filters['league']->toArray())) {
             $qb
                 ->addSelect('l.name as league')
                 ->innerJoin('p.teams', 't')
@@ -208,7 +208,7 @@ class PlayersFormResolver
 
     private function resolveLeagueForSubQuery(QueryBuilder $qb, array $filters, string $alias): void
     {
-        if (false === empty($filters['league'])) {
+        if (false === empty($filters['league']) && false === empty($filters['league']->toArray())) {
             $qb
                 ->andWhere($alias .  '.league = l.id')
             ;
