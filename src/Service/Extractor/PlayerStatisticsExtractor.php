@@ -66,9 +66,9 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
                 }
             }
 
-//            $player->setAge(
-//                $this->getAge($player)
-//            ); //temp not active because of captcha blockade
+            $player->setAge(
+                $this->getAge($player)
+            );
         } catch (\Exception $e) {
             dump($e);
 
