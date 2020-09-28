@@ -43,7 +43,6 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
                 $playerStats[$season] = $crawler->filter('.seasons__page .season__games .season__game')->each(function (Crawler $node, $i) {
                     return $node;
                 });
-                unset($crawler);
             }
 
             $playersData = [];
@@ -67,9 +66,9 @@ class PlayerStatisticsExtractor extends ExtractorAbstract implements ExtractorIn
                 }
             }
 
-            $player->setAge(
-                $this->getAge($player)
-            );
+//            $player->setAge(
+//                $this->getAge($player)
+//            ); //temp not active because of captcha blockade
         } catch (\Exception $e) {
             dump($e);
 
