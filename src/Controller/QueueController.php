@@ -4,9 +4,9 @@ namespace App\Controller;
 
 use App\Entity\League;
 use App\Entity\Queue;
-use App\Repository\QueueRepository;
 use App\Service\Queue\QueueAdder;
 use App\Service\Queue\QueueManager;
+use App\Service\Queue\QueueProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,20 +20,20 @@ class QueueController extends AbstractController
 
     private QueueAdder $queueAdder;
 
-    private QueueRepository $queueRepository;
+    private QueueProvider $queueProvider;
 
     private EntityManagerInterface $entityManager;
 
     public function __construct(
         QueueManager $queueManager,
         QueueAdder $queueAdder,
-        QueueRepository $queueRepository,
+        QueueProvider $queueProvider,
         EntityManagerInterface $entityManager
     )
     {
         $this->queueManager = $queueManager;
         $this->queueAdder = $queueAdder;
-        $this->queueRepository = $queueRepository;
+        $this->queueProvider = $queueProvider;
         $this->entityManager = $entityManager;
     }
 
@@ -67,7 +67,23 @@ class QueueController extends AbstractController
      */
     public function manage(int $page): Response
     {
-        $entities = $this->queueRepository->getEntities(15, $page);
+        $entities = $this->queueProvider->getQueueEntities(15, $page);
+        if (empty($entities))
+            return new JsonResponse('no queue entities found');
+
+        $this->queueManager->manage($entities);
+
+        return new JsonResponse('success');
+    }
+
+    /**
+     * @Route("/queue/manager/v2/{limit}", name="queue_manager_v2")
+     * @param int $limit
+     * @return JsonResponse
+     */
+    public function manageLimit(int $limit): Response
+    {
+        $entities = $this->queueProvider->getQueueEntitiesByLimit($limit);
         if (empty($entities))
             return new JsonResponse('no queue entities found');
 
