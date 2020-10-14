@@ -32,14 +32,14 @@ class QueueProvider
                 break;
             }
 
-            $entities = array_merge($entities, $entity);
+            $entities[] = $entity[0];
 
             $numberOfRequests +=
-                $entity->getType() === QueueEnum::PLAYERS_STAT
+                $entity[0]->getType() === QueueEnum::PLAYERS_STAT
                     ? self::NUMBER_OF_REQUESTS_PLAYER_STAT_MAKES
                     : 1;
 
-        } while($numberOfRequests <= $requestsLimit);
+        } while($numberOfRequests < $requestsLimit);
 
         return $entities;
     }

@@ -83,7 +83,7 @@ class QueueController extends AbstractController
      */
     public function manageLimit(int $limit): Response
     {
-        $entities = $this->queueProvider->getQueueEntitiesByLimit($limit);
+        $entities = $this->queueProvider->getQueueEntitiesByRequestsLimit($limit);
         if (empty($entities))
             return new JsonResponse('no queue entities found');
 
