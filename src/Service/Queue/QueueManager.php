@@ -6,6 +6,7 @@ use App\Entity\Queue;
 use App\Repository\LeagueRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TeamRepository;
+use App\Service\Extractor\ExtractorInterface;
 use App\Service\Extractor\PlayersExtractor;
 use App\Service\Extractor\PlayerStatisticsExtractor;
 use App\Service\Extractor\TeamsExtractor;
@@ -14,6 +15,7 @@ use App\Service\Updater\PlayerStatisticsUpdater;
 use App\Service\Updater\PlayersUpdater;
 use App\Service\Updater\TeamsUpdater;
 use Doctrine\ORM\EntityManagerInterface;
+use mysql_xdevapi\Exception;
 
 class QueueManager
 {
@@ -92,14 +94,21 @@ class QueueManager
         /** @var Queue $toExtract */
         foreach ($arrayToExtract as $toExtract) {
             $type = $toExtract->getType();
+            /** @var ExtractorInterface $extractor */
             [$repository, $extractor] = $this->getInstanceByType($type);
 
             $entity = $repository->findOneBy(['id' => $toExtract->getTargetId()]);
             if ($entity === null) continue;
 
             try {
+                $extractedData = $extractor->extract($entity);
+
+                if (empty($extractedData)) {
+                    throw new \Exception('Found no data in this entity.');
+                }
+
                 $data[$type] = \array_merge(
-                    $extractor->extract($entity),
+                    $extractedData,
                     $data[$type]
                 );
             } catch (\Exception $e) {
